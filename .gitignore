@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# credentials
+.env
+
+# Experiments file
+Experiments
+full_flow.ipynb
+data/SDGs_knowledge_dataset
+data/Sample Documents/*
+
+# progress file
+app.log
+next progress.txt

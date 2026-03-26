@@ -1,0 +1,243 @@
+MAP HUBUNGAN:
+[
+  {
+    "input_doc_chunk_id": 0,
+    "SDG_reference_chunk_id": 74,
+    "similarity_score": 0.47776395082473755
+  },
+  {
+    "input_doc_chunk_id": 0,
+    "SDG_reference_chunk_id": 196,
+    "similarity_score": 0.4553871154785156
+  },
+  {
+    "input_doc_chunk_id": 0,
+    "SDG_reference_chunk_id": 339,
+    "similarity_score": 0.45210838317871094
+  },
+  {
+    "input_doc_chunk_id": 0,
+    "SDG_reference_chunk_id": 125,
+    "similarity_score": 0.4453479051589966
+  },
+  {
+    "input_doc_chunk_id": 0,
+    "SDG_reference_chunk_id": 357,
+    "similarity_score": 0.44401082396507263
+  },
+  {
+    "input_doc_chunk_id": 0,
+    "SDG_reference_chunk_id": 28,
+    "similarity_score": 0.4438243508338928
+  },
+  {
+    "input_doc_chunk_id": 0,
+    "SDG_reference_chunk_id": 292,
+    "similarity_score": 0.44207391142845154
+  },
+  {
+    "input_doc_chunk_id": 1,
+    "SDG_reference_chunk_id": 18,
+    "similarity_score": 0.43958306312561035
+  },
+  {
+    "input_doc_chunk_id": 6,
+    "SDG_reference_chunk_id": 147,
+    "similarity_score": 0.438459187746048
+  },
+  {
+    "input_doc_chunk_id": 0,
+    "SDG_reference_chunk_id": 314,
+    "similarity_score": 0.43825602531433105
+  }
+]
+
+ISI CHUNK (DOKUMEN INPUT):
+[0]: ## **KERANGKA ACUAN KERJA/** _**TERM OF REFERENCE**_ 
+
+**==> picture [192 x 201] intentionally omitted <==**
+
+## **UNIT KERJA:** 
+
+## **FAKULTAS MATEMATIKA DAN ILMU PENGETAHUAN ALAM** 
+
+## **UNIVERSITAS NEGERI SURABAYA** 
+
+**TAHUN ANGGARAN 2026**
+
+
+[1]: ## **FAKULTAS MATEMATIKA DAN ILMU PENGETAHUAN ALAM** 
+
+## **UNIVERSITAS NEGERI SURABAYA** 
+
+**TAHUN ANGGARAN 2026**## **KERANGKA ACUAN KERJA/** _**TERM OF REFERENCE**_ 
+
+## **TAHUN ANGGARAN 2025** 
+
+## **PRAKTISI MENGAJAR PRODI S1 SAINS DATA FMIPA UNESA** 
+
+Kementerian Negara/Lembaga :  Kementerian Riset, Teknologi, dan Pendidikan Tinggi Unit Eselon I :  Direktorat Jenderal Pendidikan Tinggi, Riset dan Teknologi Program : Peningkatan kualitas lulusan Pendidikan Tinggi Sasaran Program :  Meningka
+
+
+[2]: Kementerian Negara/Lembaga :  Kementerian Riset, Teknologi, dan Pendidikan Tinggi Unit Eselon I :  Direktorat Jenderal Pendidikan Tinggi, Riset dan Teknologi Program : Peningkatan kualitas lulusan Pendidikan Tinggi Sasaran Program :  Meningkatnya kualitas pembelajaran dan mahasiswa UNESA Indikator Kinerja Program :  Jumlah praktisi yang terlibat, jumlah mata kuliah yang diperkuat, jumlah mahasiswa penerima manfaat, kualitas pembelajaran berbasis industri, peningkatan jejaring dengan mitra ekster
+
+
+[3]: penerima manfaat, kualitas pembelajaran berbasis industri, peningkatan jejaring dengan mitra eksternal, tingkat kepuasan mahasiswa dan dosen, serta tersusunnya laporan kegiatan sebagai bentuk pertanggungjawaban dan dukungan akreditasi Kegiatan :  P004 - Output :  P004.202 – Perkuliahan/Kegiatan Belajar Mengajar Komponen Input :  P004.202.001.003 – Menyelenggarakan kuliah tamu Indikator Kinerja Komponen : Terselenggaranya kuliah tamu oleh praktisi Detail Aktivitas/Kegiatan : Kuliah tamu oleh praktisi Volume :  4 Satuan : Orang
+
+
+[4]: ## **A. Latar Belakang** 
+
+1. Dasar Hukum 
+
+   1. Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara; 
+
+   2. Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara; 
+
+   3. Undang-Undang Nomor 15 Tahun 2004 tentang Pemeriksaan Pengelolaan dan Tanggung Jawab Keuangan Negara; 
+
+   4. Peraturan Pemerintah Republik Indonesia Nomor 37 tahun 2022 tentang Perguruan Tinggi Negeri Badan Hukum Universitas Negeri Surabaya;
+
+
+[5]: 4. Peraturan Pemerintah Republik Indonesia Nomor 37 tahun 2022 tentang Perguruan Tinggi Negeri Badan Hukum Universitas Negeri Surabaya; 
+
+   5. Permendikbud Ristek Nomor 13 Tahun 2022 tentang perubahan atas Permendikbud Nomor 22 Tahun 2020 tentang Rencana Strategis Kementerian Pendidikan dan Kebudayaan Tahun 2020-2024;
+
+
+[6]: 5. Permendikbud Ristek Nomor 13 Tahun 2022 tentang perubahan atas Permendikbud Nomor 22 Tahun 2020 tentang Rencana Strategis Kementerian Pendidikan dan Kebudayaan Tahun 2020-2024;6. Keputusan Direktur Jenderal Pendidikan Tinggi, Riset, Dan Teknologi Nomor 164/E/KPT/2022 tentang Rencana Strategis Direktorat Jenderal Pendidikan Tinggi, Riset, Dan Teknologi Tahun 2020-2024; 
+
+7. Peraturan Rektor Nomor 35 tahun 2022 tentang Standar Biaya Masukan Tahun Anggaran 2024 Universitas Negeri Surabaya;
+
+
+[7]: 7. Peraturan Rektor Nomor 35 tahun 2022 tentang Standar Biaya Masukan Tahun Anggaran 2024 Universitas Negeri Surabaya; 
+
+8. Peraturan Rektor Nomor 3 tahun 2022 tentang Perubahan Kesatu Atas Peraturan Rektor Nomor 10 Tahun 2020 Tentang Rencana Strategis Bisnis Universitas Negeri Surabaya Tahun 2020-2024; 
+
+## **B. Gambaran Umum**
+
+
+[8]: 8. Peraturan Rektor Nomor 3 tahun 2022 tentang Perubahan Kesatu Atas Peraturan Rektor Nomor 10 Tahun 2020 Tentang Rencana Strategis Bisnis Universitas Negeri Surabaya Tahun 2020-2024; 
+
+## **B. Gambaran Umum** 
+
+Program Studi S1 Sains Data FMIPA Universitas Negeri Surabaya memiliki visi _“to become a provider of education, research and application of science and technology in the field of data science based on edu-technoecopreneurship and with a global reputation.”_ Dalam rangka mewujudkan visi tersebut, prodi menyelenggarakan pendidikan, penelitian, dan pengabdian masyarakat yang adaptif, inovatif, serta berbasis edu-technoecopreneurship.
+
+
+
+ISI CHUNK (SDG REFERENCES):
+[74]: **==> picture [167 x 52] intentionally omitted <==**
+
+## **SDG** 
+
+## **4** 
+
+## Quality Education 
+
+**==> picture [364 x 379] intentionally omitted <==**
+
+**----- Start of picture text -----**
+THE**----- End of picture text ----- THE SUSTAINABILITY IMPACT RATINGS** METHODOLOGY **2026[|] 49**
+
+
+[196]: **==> picture [167 x 52] intentionally omitted <==**
+
+## **SDG** 
+
+## **9** Industry, Innovation and Infrastructure 
+
+**==> picture [364 x 379] intentionally omitted <==**
+
+**----- Start of picture text -----**
+THE**----- End of picture text ----- THE SUSTAINABILITY IMPACT RATINGS** METHODOLOGY **2026[|] 109**
+
+
+[339]: **==> picture [167 x 52] intentionally omitted <==**
+
+## **SDG** 
+
+# **15** 
+
+## Life On Land 
+
+**==> picture [364 x 379] intentionally omitted <==**
+
+**----- Start of picture text -----**
+THE**----- End of picture text -----**
+
+
+[125]: **==> picture [167 x 52] intentionally omitted <==**
+
+## **SDG** 
+
+## **6** Clean Water and Sanitation 
+
+**==> picture [364 x 379] intentionally omitted <==**
+
+**----- Start of picture text -----**
+THE**----- End of picture text ----- THE SUSTAINABILITY IMPACT RATINGS** METHODOLOGY **2026[|] 78**
+
+
+[357]: **==> picture [167 x 52] intentionally omitted <==**
+
+## **SDG** 
+
+# **16** 
+
+## Peace, Justice and Strong Institutions 
+
+**==> picture [364 x 379] intentionally omitted <==**
+
+**----- Start of picture text -----**
+THE**----- End of picture text -----**
+
+
+[28]: **==> picture [167 x 52] intentionally omitted <==**
+
+## **SDG** 
+
+**2** Zero Hunger 
+
+**==> picture [364 x 379] intentionally omitted <==**
+
+**----- Start of picture text -----**
+THE**----- End of picture text ----- THE SUSTAINABILITY IMPACT RATINGS** METHODOLOGY **2026[|] 28**
+
+
+[292]: **==> picture [167 x 52] intentionally omitted <==**
+
+## **SDG** 
+
+## **13** Climate Action 
+
+**==> picture [364 x 379] intentionally omitted <==**
+
+**----- Start of picture text -----**
+THE**----- End of picture text ----- THE SUSTAINABILITY IMPACT RATINGS** METHODOLOGY **2026[|] 144**
+
+
+[18]: |**1.3.4**|**Bottom financial quintile student support Year: 2024**Programmes or initiatives to assist studentswho fall into the bottom 20% of householdincome group (or a more tightly defined targetin the country to successfully complete theirstudies.Up to three points based on:• Existence of programmes or initiatives – onepoint• Evidence provided – up to one point• Is the evidence provided public – one point|) **4.6% in SDG**(1.2% Overall)|
+|**1.3.5**|**Low or lower-middle income countries student support Year: 2024**Schemes to support poor students from low orlower-middle income countries (e.g. offeringfree education, grants).Up to three points based on:• Existence of schemes – one point• Evidence provided – up to one point• Is the evidence provided public – one point|**4.6% in SDG**(1.2% Overall)|
+
+
+
+## **Data submission guidance** 
+
+## **Definitions of income:**
+
+
+[147]: **THE SUSTAINABILITY IMPACT RATINGS** METHODOLOGY **2026[|] 81**
+
+
+[314]: **==> picture [167 x 52] intentionally omitted <==**
+
+## **SDG** 
+
+# **14** 
+
+## Life Below Water 
+
+**==> picture [364 x 379] intentionally omitted <==**
+
+**----- Start of picture text -----**
+THE**----- End of picture text -----**
+
+
