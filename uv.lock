@@ -7,7 +7,7 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "ai-sdgs-scoring"
+name = "aisdg"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
