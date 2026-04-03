@@ -12,13 +12,19 @@ import numbers
 mock_path = "./tests/mocks/"
 
 @pytest.fixture
-def generate_md():
-    example_md = input_doc.convert_to_md("./data/Sample Documents/TOR-PM.pdf")
+def generate_md() -> str:
+    with open(mock_path+"ACHMAD KAUTSAR_1.md", "r", encoding="utf-8") as f:
+        example_md = f.read()
     return example_md
 
 @pytest.fixture
-def generate_chunked_pages(generate_md):
+def generate_splitted_pages(generate_md) -> list[str]:
     splitted_pages = text_processing.split_and_clean_pages(generate_md)
+    return splitted_pages
+
+@pytest.fixture
+def generate_chunked_pages(generate_splitted_pages):
+    splitted_pages = generate_splitted_pages
     chunked_pages = [text_processing.chunk_text(text) for text in splitted_pages]
     return chunked_pages
 
@@ -70,6 +76,12 @@ def load_inmemory_vdb(load_mini_embedding, generate_extracted_data):
         )
         vdb.save_local(save_path)
     return vdb
+
+@pytest.fixture
+def generate_metadata_indices(generate_splitted_pages: list[str]):
+    splitted_pages = generate_splitted_pages
+    metadata_indices = input_doc.detect_metadata(splitted_pages)
+    return metadata_indices
 
 
 
@@ -147,3 +159,20 @@ def test_build_graph_prompt(generate_matched_sdg, load_inmemory_vdb):
             f.write(retrieval_result)
     
     assert os.path.exists(save_path)
+
+
+@pytest.mark.unit
+def test_detect_metadata(generate_splitted_pages: list[str]):
+    splitted_pages = generate_splitted_pages
+    result = input_doc.detect_metadata(splitted_pages)
+    assert isinstance(result, dict)
+
+
+@pytest.mark.unit(type_test="priority")
+def test_extract_metadata(generate_md):
+    md_text = generate_md
+    metadata = input_doc.extract_metadata(md_text, "test_article")
+    assert isinstance(metadata, dict)
+    assert isinstance(metadata['abstract'], str)
+    assert isinstance(metadata['title'], str)
+    assert isinstance(metadata['conclusion'], str)
