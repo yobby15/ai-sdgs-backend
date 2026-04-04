@@ -1,6 +1,7 @@
 from app.database import inmemory_vdb_service, supabase_service
+from app.infrastructure import embedding_service
 
-from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS, SupabaseVectorStore
 from langchain_core.embeddings import FakeEmbeddings
 from supabase import Client
 
@@ -12,13 +13,6 @@ import json
 load_dotenv()
 mock_path = "./tests/mocks/"
 
-@pytest.fixture
-def supabase_client_init():
-    supabase_url = os.getenv("SUPABASE_URL")
-    supabase_service_key = os.getenv("SUPABASE_SERVICE_KEY")
-    supabase = supabase_service.supabase_init(supabase_url=supabase_url, supabase_service_key=supabase_service_key)
-    return supabase
-
 
 @pytest.mark.supabase
 def test_supabase_init():
@@ -26,6 +20,20 @@ def test_supabase_init():
     supabase_service_key = os.getenv("SUPABASE_SERVICE_KEY")
     supabase = supabase_service.supabase_init(supabase_url=supabase_url, supabase_service_key=supabase_service_key)
     assert type(supabase) == Client
+
+
+@pytest.mark.supabase
+def test_supabase_vdb_init(supabase_client_init):
+    supabase = supabase_client_init
+    embeddings = FakeEmbeddings(size=1024)
+    vdb = supabase_service.supabase_vdb_init(supabase=supabase, embeddings=embeddings)
+
+    assert isinstance(vdb, SupabaseVectorStore)
+
+    result = vdb.similarity_search_with_relevance_scores("test search", k=2)
+    assert isinstance(result, list)
+    assert len(result) == 2
+    assert isinstance(result[0][1], float)
 
 
 @pytest.mark.supabase

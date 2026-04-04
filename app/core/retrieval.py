@@ -38,9 +38,12 @@ def matching_SDG(sdg_data_rows: list, inmemory_vdb, k:int = 10):
 
 
 
-def build_graph_prompt(sdg_matches:list, inmemory_vdb, window_size:int=1):
+def build_graph_prompt(
+        sdg_matches:list,
+        # inmemory_vdb,
+        # window_size:int=1
+    ):
     """
-    `all_admin_chunks`: dict berisi seluruh chunk dokumen input, format: {chunk_id: "teks chunk"}
     `window_size`: berapa banyak chunk tambahan di depan dan belakang yang ingin diambil (default 1)
     """
     logger.info("Build Graph Prompt")
@@ -48,14 +51,17 @@ def build_graph_prompt(sdg_matches:list, inmemory_vdb, window_size:int=1):
     unique_admin_ids = set()
     unique_sdg = {}
     mapping = []
-    admin_ids = list(inmemory_vdb.docstore._dict.keys())
+    admin_content = dict()
+    # admin_ids = list(inmemory_vdb.docstore._dict.keys())
 
     for m in sdg_matches:
-        a_id = int(m['admin_metadata']['global_chunk_id']) 
+        a_id = m['admin_metadata']['type_metadata']
         s_id = m['sdg_metadata']['global_chunk_id']
         
-        for offset in range(-window_size, window_size + 1):
-            unique_admin_ids.add(str(a_id + offset))
+        # for offset in range(-window_size, window_size + 1):
+        #     unique_admin_ids.add(str(a_id + offset))
+        unique_admin_ids.add(str(a_id))
+        admin_content[str(a_id)] = m['admin_content']
             
         unique_sdg[s_id] = m['sdg_content']
 
@@ -69,12 +75,44 @@ def build_graph_prompt(sdg_matches:list, inmemory_vdb, window_size:int=1):
     
     retrieval_result += "ISI CHUNK (DOKUMEN INPUT):\n"
     for chunk_id in sorted(unique_admin_ids):
-        if chunk_id in admin_ids:
-            teks_chunk = inmemory_vdb.docstore.search(chunk_id).page_content
-            retrieval_result += f"[{chunk_id}]: {teks_chunk}\n\n\n"
+        # if chunk_id in admin_ids:
+            # teks_chunk = inmemory_vdb.docstore.search(chunk_id).page_content
+            # retrieval_result += f"[{chunk_id}]: {teks_chunk}\n\n\n"
+        teks_chunk = admin_content[chunk_id]
+        retrieval_result += f"[{chunk_id}]: {teks_chunk}\n\n\n"
     
     retrieval_result += "\nISI CHUNK (SDG REFERENCES):\n"
     for k, v in unique_sdg.items():
         retrieval_result += f"[{k}]: {v}\n\n\n"
 
+    return retrieval_result
+
+
+def retrival_SDG(metadata_article: dict, vdb, k=10):
+    logger.info("Retrieval: Matching SDG Indicator")
+    all_matches = []
+
+    for i, (key, value) in enumerate(metadata_article.items()):
+        if key == "document_name":
+            continue
+
+        query = value
+        type_metadata = key
+        matches_docs = vdb.similarity_search_with_relevance_scores(query, k=k)
+
+        for doc, score in matches_docs:
+            all_matches.append({
+                "score": float(score),
+                "sdg_content": doc.page_content,
+                "sdg_metadata": doc.metadata,
+                "admin_content": query,
+                "admin_metadata": {
+                    "type_metadata":type_metadata,
+                    "global_chunk_id":i,
+                }
+            })
+
+    sorted_match = sorted(all_matches, key=lambda x: x["score"], reverse=True)
+    retrieval_result = build_graph_prompt(sorted_match)
+    
     return retrieval_result

@@ -202,7 +202,7 @@ def extract_document(
     min_chunk_size = min_chunk_size
 
     md_text = convert_to_md(path_file, page_range=page_range)
-    metadata_document = extract_metadata(md_text)
+    metadata_document = extract_metadata(md_text, source)
 
     # splitted_page = text_processing.split_and_clean_pages(md_text, special_page=special_page, overlap_chars=page_overlap_char, tolerance=round(tolerance_rate*page_overlap_char))
     # chunked_content_per_page = [text_processing.chunk_text(content, chunk_size=chunk_size, overlap=chunk_overlap_char, tolerance=round(tolerance_rate*chunk_size), min_chunk_size=min_chunk_size) for content in splitted_page]
@@ -219,7 +219,7 @@ def extract_document(
 
 def input_document(path_file, source):
     """
-    **return**  
+    **return**  metadata dari dokumen dengan key {'document_name', 'title', 'abstract', 'conclusion'}
     """
     logger.info("Preprocessing Document Input")
     result_extraction = extract_document(
@@ -228,19 +228,20 @@ def input_document(path_file, source):
         source=source
     )
 
-    chunk_ids = []
-    texts = []
-    metadatas = []
+    # chunk_ids = []
+    # texts = []
+    # metadatas = []
 
-    for i, (key, value) in enumerate(result_extraction.items()):
-        if key == "document_name":
-            continue
+    # for i, (key, value) in enumerate(result_extraction.items()):
+    #     if key == "document_name":
+    #         continue
 
-        chunk_ids.append(str(i))
-        texts.append(value)
-        metadatas.append({
-            "source": result_extraction["document_name"],
-            "type_text":key,
-        })
+    #     chunk_ids.append(str(i))
+    #     texts.append(value)
+    #     metadatas.append({
+    #         "source": result_extraction["document_name"],
+    #         "type_text":key,
+    #     })
 
-    return chunk_ids, texts, metadatas
+    return result_extraction
+    # return chunk_ids, texts, metadatas

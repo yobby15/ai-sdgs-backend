@@ -471,7 +471,7 @@ def _score_title_candidates(candidates: list[str]) -> str | None:
         })
 
     scored_candidates.sort(key=lambda x: x["score"], reverse=True)
-    print(scored_candidates)
+    # print(scored_candidates)
     if scored_candidates and scored_candidates[0]["score"] > 0:
         return scored_candidates[0]["text"]
 

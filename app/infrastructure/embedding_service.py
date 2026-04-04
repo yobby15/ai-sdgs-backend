@@ -18,7 +18,7 @@ def embedding_init(
         match type_run:
             case "local":
                 model_kwargs = {'device': 'cpu'}
-                encode_kwargs = {'normalize_embeddings': True}
+                encode_kwargs = {'normalize_embeddings': False}
 
                 embeddings = HuggingFaceEmbeddings(
                     model_name=model_name,

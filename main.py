@@ -3,7 +3,7 @@ from app.database import supabase_service, inmemory_vdb_service
 from app.infrastructure import embedding_service, llm_agent_service, prompt_agent
 from app.utils import text_processing
 
-from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS, SupabaseVectorStore
 from supabase import Client
 
 from dotenv import load_dotenv
@@ -22,7 +22,8 @@ logging.basicConfig(
     handlers=[
         logging.FileHandler("app.log"), # Simpan ke file
         logging.StreamHandler()         # Munculkan di terminal
-    ]
+    ],
+    encoding="utf-8"
 )
 logging.getLogger("httpcore").setLevel(logging.WARNING)
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -35,13 +36,14 @@ def analyze_document(
         path_file:str,
         save_path:str,
         source:str,
-        supabase:Client,
-        embeddings,
-        inmemory_vdb : FAISS,
+        # supabase:Client,
+        # embeddings,
+        # inmemory_vdb : FAISS,
+        supabase_vdb : SupabaseVectorStore,
         llm,
         chat_prompt,
-        k:int = 5,
-        window_size:int = 2
+        k:int = 2,
+        # window_size:int = 2
 ) -> dict:
         model_name = llm.model_dump()['name']
         id_request = str(uuid.uuid4())
@@ -49,26 +51,29 @@ def analyze_document(
 
         start_time = time.time()
 
-        chunk_ids, texts, metadatas = input_doc.input_document(path_file=path_file, source=source)
-        embedded_docs = inmemory_vdb_service.vdb_embedding(
-                text_input=texts,
-                embeddings=embeddings
-        )
+        # chunk_ids, texts, metadatas = input_doc.input_document(path_file=path_file, source=source)
+        # embedded_docs = inmemory_vdb_service.vdb_embedding(
+        #         text_input=texts,
+        #         embeddings=embeddings
+        # )
 
-        inmemory_vdb.add_embeddings(
-                text_embeddings=[(text, emb) for text, emb in zip(texts, embedded_docs)],
-                metadatas=metadatas,
-                ids=chunk_ids
-        )
+        # inmemory_vdb.add_embeddings(
+        #         text_embeddings=[(text, emb) for text, emb in zip(texts, embedded_docs)],
+        #         metadatas=metadatas,
+        #         ids=chunk_ids
+        # )
 
-        sdg_data_rows = supabase_service.fetch_sdg_indicator(supabase=supabase)
+        # sdg_data_rows = supabase_service.fetch_sdg_indicator(supabase=supabase)
 
-        matches_chunk = retrieval.matching_SDG(
-                sdg_data_rows=sdg_data_rows,
-                inmemory_vdb=inmemory_vdb
-        )
+        # matches_chunk = retrieval.matching_SDG(
+        #         sdg_data_rows=sdg_data_rows,
+        #         inmemory_vdb=inmemory_vdb
+        # )
 
-        retrieval_result = retrieval.build_graph_prompt(matches_chunk[:k], inmemory_vdb=inmemory_vdb, window_size=window_size)
+        # retrieval_result = retrieval.build_graph_prompt(matches_chunk[:k], inmemory_vdb=inmemory_vdb, window_size=window_size)
+
+        metadata = input_doc.input_document(path_file=path_file, source=source)
+        retrieval_result = retrieval.retrival_SDG(metadata_article=metadata, vdb=supabase_vdb, k=k)
 
         prompt_value = chat_prompt.format_prompt(text=retrieval_result)
         full_prompt = prompt_value.to_string()
@@ -129,7 +134,8 @@ def main(
     embeddings = embedding_service.embedding_init()
     llm_agent = llm_agent_service.model_init(model_name="Qwen/Qwen3-Coder-Next", type_model="huggingface")
     supabase = supabase_service.supabase_init(supabase_url=os.getenv("SUPABASE_URL"), supabase_service_key=os.getenv("SUPABASE_SERVICE_KEY"))
-    inmemory_vdb = inmemory_vdb_service.inmemory_vdb_init(embeddings=embeddings, vector_length=1024)
+    supabase_vdb = supabase_service.supabase_vdb_init(supabase=supabase, embeddings=embeddings)
+#     inmemory_vdb = inmemory_vdb_service.inmemory_vdb_init(embeddings=embeddings, vector_length=1024)
     chat_prompt = prompt_agent.FULL_CHAT_PROMPT
     logger.info("DONE Initiation Process")
 
@@ -138,13 +144,14 @@ def main(
          path_file=path_file,
          save_path=save_path,
          source=source,
-         supabase=supabase,
-         embeddings=embeddings,
-         inmemory_vdb=inmemory_vdb,
+        #  supabase=supabase,
+        #  embeddings=embeddings,
+        #  inmemory_vdb=inmemory_vdb,
+         supabase_vdb=supabase_vdb,
          llm=llm_agent,
          chat_prompt=chat_prompt,
          k=k,
-         window_size=window_size
+        #  window_size=window_size
     )
     logger.info("DONE Anlyzing Document")
     logger.debug("Analyse Output: %s", str(result))
@@ -152,7 +159,7 @@ def main(
 
 if __name__ == "__main__":
     main(
-         path_file="./data/Sample Documents/ADI PRANOTO_1.pdf",
+         path_file="./data/Sample Documents/jurnal-unesa/ADI PRANOTO_1.pdf",
          save_path="./ai_result",
     )
 
