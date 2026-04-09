@@ -1,7 +1,6 @@
-from app.database import inmemory_vdb_service, supabase_service
-from app.infrastructure import embedding_service
+from app.database import inmemory_vdb_service, supabase_service, vdb_utils
 
-from langchain_community.vectorstores import FAISS, SupabaseVectorStore
+from langchain_community.vectorstores import FAISS, SupabaseVectorStore, InMemoryVectorStore
 from langchain_core.embeddings import FakeEmbeddings
 from supabase import Client
 
@@ -66,3 +65,24 @@ def test_inmemory_vdb_init():
     isi_vdb = vdb.docstore.search('1').page_content
     assert isinstance(isi_vdb, str)
     assert len(isi_vdb) > 5
+
+
+@pytest.mark.unit
+def test_add_data_to_vdb():
+    embeddings = FakeEmbeddings(size=1024)
+    vdb = InMemoryVectorStore(embedding=embeddings)
+    texts = [
+        "ABC 5 dasar",
+        "Sustainability Development Goals"
+    ]
+    metadatas = [
+        {
+            "chunk_id":"1",
+            "type":"random",
+        },
+        {
+            "chunk_id":"2",
+            "type":"random",
+        },
+    ]
+    ids_vdb = vdb_utils.add_data_to_vdb(vdb=vdb, texts=texts, metadatas=metadatas)
