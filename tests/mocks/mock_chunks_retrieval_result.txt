@@ -1,0 +1,466 @@
+MAP HUBUNGAN:
+[
+  {
+    "input_doc_chunk_id": 6,
+    "SDG_reference_chunk_id": 452,
+    "similarity_score": 0.470039276127883
+  },
+  {
+    "input_doc_chunk_id": 1,
+    "SDG_reference_chunk_id": 389,
+    "similarity_score": 0.467474024329875
+  },
+  {
+    "input_doc_chunk_id": 3,
+    "SDG_reference_chunk_id": 89,
+    "similarity_score": 0.464101878705812
+  },
+  {
+    "input_doc_chunk_id": 1,
+    "SDG_reference_chunk_id": 89,
+    "similarity_score": 0.449468704801044
+  },
+  {
+    "input_doc_chunk_id": 0,
+    "SDG_reference_chunk_id": 389,
+    "similarity_score": 0.448384904406969
+  },
+  {
+    "input_doc_chunk_id": 3,
+    "SDG_reference_chunk_id": 680,
+    "similarity_score": 0.446058532603569
+  },
+  {
+    "input_doc_chunk_id": 6,
+    "SDG_reference_chunk_id": 389,
+    "similarity_score": 0.443430560428162
+  },
+  {
+    "input_doc_chunk_id": 13,
+    "SDG_reference_chunk_id": 389,
+    "similarity_score": 0.442607335112369
+  },
+  {
+    "input_doc_chunk_id": 2,
+    "SDG_reference_chunk_id": 146,
+    "similarity_score": 0.43758993868782
+  },
+  {
+    "input_doc_chunk_id": 0,
+    "SDG_reference_chunk_id": 355,
+    "similarity_score": 0.437136887981919
+  },
+  {
+    "input_doc_chunk_id": 7,
+    "SDG_reference_chunk_id": 683,
+    "similarity_score": 0.435039336299315
+  },
+  {
+    "input_doc_chunk_id": 12,
+    "SDG_reference_chunk_id": 355,
+    "similarity_score": 0.434995980496907
+  },
+  {
+    "input_doc_chunk_id": 13,
+    "SDG_reference_chunk_id": 147,
+    "similarity_score": 0.43336231242415
+  },
+  {
+    "input_doc_chunk_id": 2,
+    "SDG_reference_chunk_id": 144,
+    "similarity_score": 0.432037540020082
+  },
+  {
+    "input_doc_chunk_id": 14,
+    "SDG_reference_chunk_id": 345,
+    "similarity_score": 0.429645042897931
+  },
+  {
+    "input_doc_chunk_id": 12,
+    "SDG_reference_chunk_id": 327,
+    "similarity_score": 0.427516791139321
+  },
+  {
+    "input_doc_chunk_id": 11,
+    "SDG_reference_chunk_id": 36,
+    "similarity_score": 0.425159224009922
+  },
+  {
+    "input_doc_chunk_id": 8,
+    "SDG_reference_chunk_id": 389,
+    "similarity_score": 0.424643943127786
+  },
+  {
+    "input_doc_chunk_id": 8,
+    "SDG_reference_chunk_id": 89,
+    "similarity_score": 0.420739493237511
+  },
+  {
+    "input_doc_chunk_id": 9,
+    "SDG_reference_chunk_id": 82,
+    "similarity_score": 0.419970324638336
+  },
+  {
+    "input_doc_chunk_id": 7,
+    "SDG_reference_chunk_id": 582,
+    "similarity_score": 0.419130898754708
+  },
+  {
+    "input_doc_chunk_id": 4,
+    "SDG_reference_chunk_id": 696,
+    "similarity_score": 0.413942404532988
+  },
+  {
+    "input_doc_chunk_id": 11,
+    "SDG_reference_chunk_id": 99,
+    "similarity_score": 0.410425012348833
+  },
+  {
+    "input_doc_chunk_id": 14,
+    "SDG_reference_chunk_id": 494,
+    "similarity_score": 0.406596234375496
+  },
+  {
+    "input_doc_chunk_id": 5,
+    "SDG_reference_chunk_id": 452,
+    "similarity_score": 0.399481593517927
+  },
+  {
+    "input_doc_chunk_id": 9,
+    "SDG_reference_chunk_id": 37,
+    "similarity_score": 0.398733587499877
+  },
+  {
+    "input_doc_chunk_id": 4,
+    "SDG_reference_chunk_id": 683,
+    "similarity_score": 0.389529045586953
+  },
+  {
+    "input_doc_chunk_id": 5,
+    "SDG_reference_chunk_id": 655,
+    "similarity_score": 0.385101778976713
+  },
+  {
+    "input_doc_chunk_id": 10,
+    "SDG_reference_chunk_id": 37,
+    "similarity_score": 0.36856994400369
+  },
+  {
+    "input_doc_chunk_id": 10,
+    "SDG_reference_chunk_id": 606,
+    "similarity_score": 0.355601197995029
+  }
+]
+
+ISI CHUNK (DOKUMEN INPUT):
+[0]: ## **KERANGKA ACUAN KERJA/** _**TERM OF REFERENCE**_ 
+
+**==> picture [192 x 201] intentionally omitted <==**
+
+## **UNIT KERJA:** 
+
+## **FAKULTAS MATEMATIKA DAN ILMU PENGETAHUAN ALAM** 
+
+## **UNIVERSITAS NEGERI SURABAYA** 
+
+**TAHUN ANGGARAN 2026**
+
+
+[1]: ## **FAKULTAS MATEMATIKA DAN ILMU PENGETAHUAN ALAM** 
+
+## **UNIVERSITAS NEGERI SURABAYA** 
+
+**TAHUN ANGGARAN 2026**## **KERANGKA ACUAN KERJA/** _**TERM OF REFERENCE**_ 
+
+## **TAHUN ANGGARAN 2025** 
+
+## **PRAKTISI MENGAJAR PRODI S1 SAINS DATA FMIPA UNESA** 
+
+Kementerian Negara/Lembaga :  Kementerian Riset, Teknologi, dan Pendidikan Tinggi Unit Eselon I :  Direktorat Jenderal Pendidikan Tinggi, Riset dan Teknologi Program : Peningkatan kualitas lulusan Pendidikan Tinggi Sasaran Program :  Meningka
+
+
+[2]: Kementerian Negara/Lembaga :  Kementerian Riset, Teknologi, dan Pendidikan Tinggi Unit Eselon I :  Direktorat Jenderal Pendidikan Tinggi, Riset dan Teknologi Program : Peningkatan kualitas lulusan Pendidikan Tinggi Sasaran Program :  Meningkatnya kualitas pembelajaran dan mahasiswa UNESA Indikator Kinerja Program :  Jumlah praktisi yang terlibat, jumlah mata kuliah yang diperkuat, jumlah mahasiswa penerima manfaat, kualitas pembelajaran berbasis industri, peningkatan jejaring dengan mitra ekster
+
+
+[3]: penerima manfaat, kualitas pembelajaran berbasis industri, peningkatan jejaring dengan mitra eksternal, tingkat kepuasan mahasiswa dan dosen, serta tersusunnya laporan kegiatan sebagai bentuk pertanggungjawaban dan dukungan akreditasi Kegiatan :  P004 - Output :  P004.202 – Perkuliahan/Kegiatan Belajar Mengajar Komponen Input :  P004.202.001.003 – Menyelenggarakan kuliah tamu Indikator Kinerja Komponen : Terselenggaranya kuliah tamu oleh praktisi Detail Aktivitas/Kegiatan : Kuliah tamu oleh praktisi Volume :  4 Satuan : Orang
+
+
+[4]: ## **A. Latar Belakang** 
+
+1. Dasar Hukum 
+
+   1. Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara; 
+
+   2. Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara; 
+
+   3. Undang-Undang Nomor 15 Tahun 2004 tentang Pemeriksaan Pengelolaan dan Tanggung Jawab Keuangan Negara; 
+
+   4. Peraturan Pemerintah Republik Indonesia Nomor 37 tahun 2022 tentang Perguruan Tinggi Negeri Badan Hukum Universitas Negeri Surabaya;
+
+
+[5]: 4. Peraturan Pemerintah Republik Indonesia Nomor 37 tahun 2022 tentang Perguruan Tinggi Negeri Badan Hukum Universitas Negeri Surabaya; 
+
+   5. Permendikbud Ristek Nomor 13 Tahun 2022 tentang perubahan atas Permendikbud Nomor 22 Tahun 2020 tentang Rencana Strategis Kementerian Pendidikan dan Kebudayaan Tahun 2020-2024;
+
+
+[6]: 5. Permendikbud Ristek Nomor 13 Tahun 2022 tentang perubahan atas Permendikbud Nomor 22 Tahun 2020 tentang Rencana Strategis Kementerian Pendidikan dan Kebudayaan Tahun 2020-2024;6. Keputusan Direktur Jenderal Pendidikan Tinggi, Riset, Dan Teknologi Nomor 164/E/KPT/2022 tentang Rencana Strategis Direktorat Jenderal Pendidikan Tinggi, Riset, Dan Teknologi Tahun 2020-2024; 
+
+7. Peraturan Rektor Nomor 35 tahun 2022 tentang Standar Biaya Masukan Tahun Anggaran 2024 Universitas Negeri Surabaya;
+
+
+[7]: 7. Peraturan Rektor Nomor 35 tahun 2022 tentang Standar Biaya Masukan Tahun Anggaran 2024 Universitas Negeri Surabaya; 
+
+8. Peraturan Rektor Nomor 3 tahun 2022 tentang Perubahan Kesatu Atas Peraturan Rektor Nomor 10 Tahun 2020 Tentang Rencana Strategis Bisnis Universitas Negeri Surabaya Tahun 2020-2024; 
+
+## **B. Gambaran Umum**
+
+
+[8]: 8. Peraturan Rektor Nomor 3 tahun 2022 tentang Perubahan Kesatu Atas Peraturan Rektor Nomor 10 Tahun 2020 Tentang Rencana Strategis Bisnis Universitas Negeri Surabaya Tahun 2020-2024; 
+
+## **B. Gambaran Umum** 
+
+Program Studi S1 Sains Data FMIPA Universitas Negeri Surabaya memiliki visi _“to become a provider of education, research and application of science and technology in the field of data science based on edu-technoecopreneurship and with a global reputation.”_ Dalam rangka mewujudkan visi tersebut, prodi menyelenggarakan pendidikan, penelitian, dan pengabdian masyarakat yang adaptif, inovatif, serta berbasis edu-technoecopreneurship.
+
+
+[9]: Salah satu strategi untuk memperkuat relevansi pembelajaran dengan kebutuhan dunia kerja adalah melalui program Praktisi Mengajar. Program ini menghadirkan praktisi industri ke ruang kelas untuk berbagi pengalaman, wawasan, dan keterampilan terkini dalam bidang sains data, analitik, kecerdasan buatan, dan teknologi digital lainnya. Dengan demikian, mahasiswa tidak hanya memperoleh pemahaman teoretis, tetapi juga kompetensi praktis yang relevan dengan tantangan nyata di lapangan.
+
+
+[10]: Dengan demikian, mahasiswa tidak hanya memperoleh pemahaman teoretis, tetapi juga kompetensi praktis yang relevan dengan tantangan nyata di lapangan. Praktisi Mengajar juga sejalan dengan misi prodi, yaitu meningkatkan kualitas inovasi penelitian, memperkuat kerja sama dengan dunia usaha dan industri, serta menyiapkan lulusan yang profesional, berkarakter, dan berdaya saing global. 
+
+## **C. Penerima Manfaat**
+
+
+[11]: ## **C. Penerima Manfaat** 
+
+Seluruh dosen dan mahasiswa Prodi S1 Sains Data FMIPA Universitas Negeri Surabaya, serta mitra industri atau mitra akademik. 
+
+## **D. Strategi Pencapaian Keluaran** 
+
+1. Metode Pelaksanaan 
+
+   - Identifikasi dan pemetaan praktisi dari sektor industri, pemerintah, dan lembaga riset. 
+
+   - Penjadwalan perkuliahan praktisi sesuai mata kuliah yang relevan. 
+
+   - Pelaksanaan kuliah praktisi melalui tatap muka, kuliah tamu, workshop, atau proyek berbasis industri.
+
+
+[12]: - Pelaksanaan kuliah praktisi melalui tatap muka, kuliah tamu, workshop, atau proyek berbasis industri.- Integrasi hasil pembelajaran ke dalam evaluasi kurikulum dan kegiatan penelitian/ pengabdian. 
+
+- Monitoring dan evaluasi pelaksanaan untuk memastikan pencapaian target pembelajaran 
+
+. 
+
+2. Tahapan Keluaran 
+
+   - Minimal 4 praktisi dari industri relevan terlibat dalam kegiatan mengajar tahun 2026. 
+
+   - Peningkatan kualitas pembelajaran berbasis data science.
+
+
+[13]: - Minimal 4 praktisi dari industri relevan terlibat dalam kegiatan mengajar tahun 2026. 
+
+   - Peningkatan kualitas pembelajaran berbasis data science. 
+
+   - Laporan kegiatan Praktisi Mengajar yang mendukung akreditasi unggul prodi. 
+
+   - Rencana tindak lanjut berupa peluang magang, riset bersama, atau sertifikasi mahasiswa. 
+
+## **E. Kurun Waktu Pencapaian Keluaran** 
+
+Waktu pelaksanaan kegiatan tersebut direncanakan pada bulan Januari - Desember 2026 
+
+## **F. Biaya Yang Dibutuhkan**
+
+
+[14]: Waktu pelaksanaan kegiatan tersebut direncanakan pada bulan Januari - Desember 2026 
+
+## **F. Biaya Yang Dibutuhkan** 
+
+Biaya yang diperlukan untuk kegiatan tersebut sebesar Rp. 13.900.000 dengan sumber dana Uang Kuliah Tunggal. 
+
+Penanggung Jawab Kegiatan, Koprodi S-1 Sains Data FMIPA 
+
+Yuliani Puji Astuti, S.Si., M.Si. NIP 197807312006042001
+
+
+
+ISI CHUNK (SDG REFERENCES):
+[452]: e pointIs policy created or reviewed in period 2020-2024 – one point|**0.95% in SDG**(0.24%Overall)|## **SDG 10** Reduced Inequalities 
+
+|**#**|**Indicator**|**Maximum**|
+|---|---|---|
+|||**score**|
+|**10.6.5 **|**University diversity officer Year: 2024**Have a diversity and equality committee,office or officer (or the equivalent) tasked bythe administration or governing body toadvise on and implement policies,programmes and trainings related todiversity, equity, inclusion and human rightson campus.Up to three points based on:• Existence of committee and/or offices – onepoint• Evidence provided – up to one point• Is the evidence provided public–one point|**1.90% in SDG**(0.49%Overall)|
+
+
+[389]: lecturer, reader, professor who teach, research or do both by subject area, referring to 2024. This is a subset of number of academic staff.**|## **SDG 9** Industry, Innovation and Infrastructure 
+
+## **Data submission guidance** 
+
+## **Definition: currency** 
+
+Research income is to be provided in the currency previously identified as that used by your institution. 
+
+## **Definition: Broad subject areas (see appendix 3)** 
+
+- STEM 
+
+- Medicine 
+
+- Arts & Humanities / Social Sciences
+
+
+[89]: ## **Data submission guidance** 
+
+## **Overview:** 
+
+This metric tries to capture whether your institution actively teaches food sustainability within accredited undergraduate and postgraduate agriculture and aquaculture courses. 
+
+## **Guidance: Graduates** 
+
+A graduate is a person who has successfully completed a course of study or training resulting in an award or qualification. 
+
+This includes all graduations:
+
+
+[680]: |**16.2.2 **|**Students’ union Year: 2024**Recognise an independent students’ unionUp to three points based on:• Existence of recognition – 0.33 points forunion providing governance input, 0.33 forunion providing support for students, 0.33for union providing social activities• Evidence provided – up to one point• Is the evidence provided public–one point|**3.35% in SDG**(0.87%Overall)|
+
+
+[146]: The metric tries to show how universities are ensuring that primary education is adequately resourced. 
+
+The metric relates to the UN Targets 4.C 
+
+This indicator is normalised and is worth 15.40% of the score in this SDG (equivalent to 4% of the overall score). 
+
+## **4.2.1 Indicator: Proportion of graduates with relevant qualification for teaching Year: 2024**
+
+
+[355]: To understand if universities are preparing students for the world of work we asked for the number of students with an employment placement of more than a month required as part of their studies, divided by the total number of students. All data are provided as fulltime equivalents. 
+
+The metric relates to the UN Targets 8.6. 
+
+This indicator is normalised and is worth 19% of the score in this SDG (equivalent to 4.94% of the overall score).
+
+
+[683]: |**16.2.5 **|**University principles on corruption and bribery In place by 2024**Publish the university’s principles andcommitments on organized crime, corruption& briberyUp to three points based on:• Existence of publication – one point• Evidence provided – up to one point• Is the evidenceprovidedpublic – onepoint|**3.35% in SDG**(0.87%Overall)|
+
+
+[147]: ## **4.2.1 Indicator: Proportion of graduates with relevant qualification for teaching Year: 2024** 
+
+|**Data Collected**|**Definition**|
+|---|---|
+|||
+|**Number of graduates**|**This is the total headcount number of graduates at all levels from your institution in year 2024.**|
+|**Number of graduates who gained a qualification that entitled them to teach at primary school level**|**This is the headcount number of graduates at all levels from your institution who gained a qualification that entitled them to teach at primary school level, referring to year 2024. This is a subset of the total number of graduates.**|
+
+
+[144]: It is not scaled by the size of the institution– rather it looks at the overall impact.## **SDG 4** Quality Education 
+
+This indicator is normalised and is worth 7% of the score in this SDG (equivalent to 1.82% of the overall score). 
+
+## **4.2 Proportion of graduates with teaching qualification**
+
+
+[345]: |**Data Collected**|**Definition**|
+|---|---|
+|**Number of employees**|**This is the FTE (Full Time Equivalent) number of employees, including outsourced core services, referring to year 2024.**|
+|**University expenditure**|**Total university expenditure in last financial year 2024.**|
+
+
+
+## **Data submission guidance** 
+
+## **Guidance: Expenditure** 
+
+This refers to spending in three main categories: 
+
+- Staff costs (including outsourced core services) 
+
+- Fundamental restructuring costs
+
+
+[327]: This indicator is normalised and is worth 13% of the score in this SDG (equivalent to 3.38% of the overall score). 
+
+## **8.2 Employment practice** 
+
+Universities need to demonstrate commitment to good employment practices: for example paying staff living wage, union recognition, policies against exploitation (incl. early stage researchers), process to appeal, etc.
+
+
+[36]: ## **Guidance: Target to admit students:** 
+
+We are looking for examples of focusing activities at people who may not be able to attend university because of serious financial disadvantages. This can include long term objectives and measurements that support them where discrimination at the point of admission is not permissible. For example, pipeline programs would fit under this definition. 
+
+## **Guidance: Provide support (1.3.3):**
+
+
+[82]: - establishment of trading partnership, based on dialogue, transparency and respect 
+
+## **Guidance: 2.3.1** 
+
+A programme suggests a continuous, targeted and coordinated approach to addressing student hunger – it could include identifying or measuring. 
+
+## **Guidance: 2.3.2 & 2.3.5** 
+
+Interventions could be occasional/one off events, but the focus needs to be direct and practical. 
+
+## **Guidance: 2.3.4**
+
+
+[582]: |**#**|**Indicator**|**Maximum**|
+|---|---|---|
+|||**score**|
+|**13.4.1 **|**Commitment to carbon neutral university Year: 2024**Have a target date by which it will becomecarbon neutral according to the GreenhouseGas Protocols?Up to five points based on:•Existence of target•Evidence provided – up to one point•Is the evidence provided public – onepoint•Scopes covered - maximum of threepoints`o`Scope 1 or not known, nopoints`o`Scope 1 and 2, one point`o`Scope 1, 2 and 3 (partial),two points`o`Scop
+
+
+[696]: ## **Guidance: Financial data (16.2.7)** 
+
+The data can be provided at a consolidated level, but should be sufficient for analysis as to the financial probity and viability of an institution. Consolidated accounts that are produced to GAAP standards would be a good example 
+
+## **16.3 Working with government** 
+
+Universities need to demonstrate how they are working with government.
+
+
+[99]: |**2.5.3**|**University access to local farmers and food producers Year: 2024**Provide access to university facilities (e.g.labs, technology, plant stocks) to local farmersand food producers to improve sustainablefarming practices.Up to three points based on:• Provision of access – maximum one point forfree, only 0.25 points for paid• Evidence provided – up to one point• Is the evidence provided public – one point| **4.80% in SDG**(1.25%Overall)|
+
+
+[494]: |**Data Collected**|**Definition**|
+|---|---|
+|**University expenditure**|**Total university expenditure in 2024 financial year**|
+|**University expenditure on arts and heritage**|**University expenditure spent on supporting arts and heritage in 2024 financial year.**|
+
+
+
+## **Data submission guidance** 
+
+## **Definition: University expenditure** 
+
+see 8.3 
+
+## **Definition: Expenditure on arts and heritage** 
+
+This includes:
+
+
+[37]: ## **Guidance: Provide support (1.3.3):** 
+
+This is about the institution connecting students to services they need so they are more likely to continue their education instead of dropping out. An example could be a ‘support center’ on campus. 
+
+## **Guidance: Have programmes or initiatives (1.3.4):** 
+
+This is about specific programmes as a continuous, targeted and coordinated approach to helping poor students graduate.
+
+
+[655]: |**15.3.2 **|**Monitoring IUCN and other conservation species (policies) Year: in place by 2024**Have a policy to identify, monitor and protectany IUCN Red Listed species and nationalconservation list species with habits in areasaffected by the operation of your universityUp to four points based on:• Existence of policy – one point• Evidence provided – up to one point• Is the evidence provided public – one point• Is policy created or reviewed inperiod 2020-2024 – onepoint|**5.40% in SDG**(1.40%O
+
+
+[606]: ## **Guidance: 14.2.1 and 14.2.2** 
+
+…’for local or national communities’ means that these target practitioners. In this context university degree programmes (BA or MA programmes) can only be accepted as evidence if this point is explicitly targeted. 
+
+## **14.3 Supporting aquatic ecosystems through action** 
+
+Universities need to demonstrate how they are providing direct support through actions in maintaining ecosystems in rivers, lakes and seas.
+
+
