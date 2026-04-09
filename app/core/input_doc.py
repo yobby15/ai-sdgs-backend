@@ -1,10 +1,13 @@
 from app.utils import text_processing
 
+from langchain_core.documents import Document
+
 import pymupdf4llm
 import json
 import logging
-from typing import Literal
+from typing import Literal, Union, Optional
 import re
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -112,11 +115,20 @@ def detect_metadata(pages_list: list[str]) -> dict:
 
 def extract_metadata(text : str, doc_name : str) -> dict:
     """
-    Funtion untuk mengekstrak metadata dari dokumen artikel atau paper Dosen. Metadata yang diekstrak [title, abstract, conclusion].
-    - `text`: text dokumen dengan format markdown,
-    - `doc_name`: nama dokumen
+    Mengekstrak metadata kunci dari dokumen akademik dan publikasi dosen.
 
-    **return** dictionary berisi metadata dokumen.
+    Fungsi ini memproses teks berformat Markdown untuk mengidentifikasi dan mengambil komponen penting seperti judul, abstrak, dan kesimpulan.
+
+    Args:
+        text (str): Konten dokumen mentah yang sudah dikonversi ke format Markdown.
+        doc_name (str): Nama file atau identitas unik dokumen sebagai referensi.
+
+    Returns:
+        dict: Dictionary yang berisi metadata hasil ekstraksi dengan kunci:
+            - 'document_name' (str): Nama asli dokumen.
+            - 'title' (str): Judul artikel/paper yang terdeteksi.
+            - 'abstract' (str): Abstrak dokumen.
+            - 'conclusion' (str): Kesimpulan atau poin akhir dokumen.
     """
 
     splitted_pages = text_processing.split_and_clean_pages(text, add_overlap= False)
@@ -161,19 +173,118 @@ def extract_metadata(text : str, doc_name : str) -> dict:
 
     return metadata
 
-def extract_document(
-        path_file: str,
+
+def extract_chunk(
+        text: str,
         type_doc: Literal["sdg_evidence", "sdg_knowledge"],
         source: str,
-        save_path: str = None,
-        page_range: list[int, int] = None,
+        page_range:list[int, int] = None,
         special_page: list[int] = [],
         page_overlap_char: int = 100,
         chunk_size: int = 500,
         chunk_overlap_char: int = 100,
         tolerance_rate: float = 0.5,
         min_chunk_size: int = 100,
-):
+) -> list[dict]:
+    """
+    Memproses teks mentah dokumen menjadi potongan-potongan kecil (chunks) yang terstruktur.
+
+    Fungsi ini memiliki pipeline: 
+    1. Membagi teks berdasarkan halaman dengan pembersihan karakter dan sistem overlap antar halaman.
+    2. Melakukan chunking pada setiap halaman berdasarkan batas karakter yang ditentukan untuk 
+       memastikan konteks tetap terjaga bagi model LLM/Embedding.
+
+    Args:
+        text (str): Konten teks mentah yang diekstrak dari dokumen.
+        type_doc (Literal["sdg_evidence", "sdg_knowledge"]): Klasifikasi dokumen untuk metadata.
+        source (str): Nama file atau identitas sumber dokumen.
+        special_page (list[int], optional): Daftar nomor halaman yang memerlukan perlakuan 
+            khusus saat ekstraksi. Defaults to [].
+        page_overlap_char (int, optional): Jumlah karakter yang tumpang tindih antar 
+            halaman untuk menjaga kontinuitas teks. Defaults to 100.
+        chunk_size (int, optional): Target jumlah karakter maksimal dalam satu chunk. 
+            Defaults to 500.
+        chunk_overlap_char (int, optional): Jumlah karakter yang tumpang tindih antar 
+            chunk berturutan. Defaults to 100.
+        tolerance_rate (float, optional): Rasio toleransi untuk perhitungan fleksibilitas 
+            ukuran chunk dan overlap (misal: 0.5 berarti toleransi 50%). Defaults to 0.5.
+        min_chunk_size (int, optional): Batas minimum karakter agar sebuah chunk dianggap 
+            valid dan tidak dibuang. Defaults to 100.
+
+    Returns:
+        list[dict]: Daftar objek JSON/dictionary yang berisi teks chunk beserta metadatanya.
+
+    Example:
+        >>> chunks = extract_chunk(text="isi dokumen...", type_doc="sdg_evidence", source="Laporan_2024.pdf")
+        >>> print(chunks[0]['text'])
+    """
+
+    splitted_page = text_processing.split_and_clean_pages(
+        text=text,
+        page_range=page_range,
+        special_page=special_page,
+        overlap_chars=page_overlap_char,
+        tolerance=round(tolerance_rate*page_overlap_char)
+    )
+
+    chunked_content_per_page = [
+        text_processing.chunk_text(
+            content,
+            chunk_size=chunk_size,
+            overlap=chunk_overlap_char,
+            tolerance=round(tolerance_rate*chunk_size),
+            min_chunk_size=min_chunk_size
+        ) for content in splitted_page
+    ]
+
+    clean_extracted = text_processing.pages_to_json_format(
+        chunked_content_per_page,
+        type_doc=type_doc,
+        source=source
+    )
+
+    return clean_extracted
+
+
+
+def extract_document(
+    path_file: str,
+    type_doc: Literal["sdg_evidence", "sdg_knowledge"],
+    source: str,
+    save_path: Optional[str] = None,
+    page_range: Optional[list[int]] = None,
+    special_page: list[int] = [],
+    page_overlap_char: int = 100,
+    chunk_size: int = 500,
+    chunk_overlap_char: int = 100,
+    tolerance_rate: float = 0.5,
+    min_chunk_size: int = 100,
+) -> Union[dict, list[dict]]:
+    """
+    Orkestrator utama untuk mengekstraksi konten dokumen menjadi format terstruktur (JSON/Metadata/Chunks).
+
+    Fungsi ini melakukan konversi dokumen ke Markdown terlebih dahulu, kemudian menerapkan logika ekstraksi yang berbeda berdasarkan kategori dokumen:
+    1. **sdg_evidence**: Mencoba mengekstrak metadata (judul, abstrak, kesimpulan). Jika abstrak/kesimpulan tidak ditemukan, sistem otomatis melakukan fallback ke proses chunking.
+    2. **sdg_knowledge**: Langsung melakukan proses chunking teks untuk knowledge database.
+
+    Args:
+        path_file (str): Path file sumber yang akan diproses.
+        type_doc (Literal["sdg_evidence", "sdg_knowledge"]): Klasifikasi dokumen untuk menentukan alur ekstraksi.
+        source (str): Nama sumber atau identitas dokumen.
+        save_path (str, optional): Path lengkap (termasuk .json) jika ingin menyimpan hasil ekstraksi ke file lokal. Defaults to None.
+        page_range (list[int], optional): Batasan halaman yang akan diproses, misal [awal, akhir]. Jika None, seluruh dokumen diproses. Defaults to None.
+        special_page (list[int], optional): Daftar halaman tertentu yang tidak memerlukan overlap. Defaults to [].
+        page_overlap_char (int, optional): Karakter overlap antar halaman. Defaults to 100.
+        chunk_size (int, optional): Ukuran maksimal karakter per chunk. Defaults to 500.
+        chunk_overlap_char (int, optional): Karakter overlap antar chunk. Defaults to 100.
+        tolerance_rate (float, optional): Tingkat toleransi fleksibilitas ukuran teks. Defaults to 0.5.
+        min_chunk_size (int, optional): Batas minimal karakter untuk validasi chunk. Defaults to 100.
+
+    Returns:
+        Union[dict, list[dict]]: Jika mengekstrak metadata, mengembalikan dictionary 
+            metadata. Jika melakukan chunking, mengembalikan list of dictionaries (chunks).
+    """
+
     logger.debug("[START] : Extracting Document (input parameter:%s)", {
         "path_file":path_file,
         "type_doc":type_doc,
@@ -188,60 +299,107 @@ def extract_document(
         "min_chunk_size":min_chunk_size,
     })
 
-    path_file = path_file
-    type_doc = type_doc
-    source = source
-
-    page_range = page_range
-    special_page = special_page
-    page_overlap_char = page_overlap_char
-
-    chunk_size = chunk_size
-    chunk_overlap_char = chunk_overlap_char
-    tolerance_rate = tolerance_rate
-    min_chunk_size = min_chunk_size
-
     md_text = convert_to_md(path_file, page_range=page_range)
-    metadata_document = extract_metadata(md_text, source)
 
-    # splitted_page = text_processing.split_and_clean_pages(md_text, special_page=special_page, overlap_chars=page_overlap_char, tolerance=round(tolerance_rate*page_overlap_char))
-    # chunked_content_per_page = [text_processing.chunk_text(content, chunk_size=chunk_size, overlap=chunk_overlap_char, tolerance=round(tolerance_rate*chunk_size), min_chunk_size=min_chunk_size) for content in splitted_page]
-    # clean_extracted = text_processing.pages_to_json_format(chunked_content_per_page, type_doc=type_doc, source=source)
+    match type_doc:
+        case "sdg_evidence":
+            metadata_document = extract_metadata(md_text, source)
+            if (metadata_document['abstract'] or metadata_document['conclusion']) is None:
+                result_extraction = extract_chunk(
+                    text=md_text,
+                    type_doc=type_doc,
+                    source=source,
+                    page_range=page_range,
+                    special_page=special_page,
+                    page_overlap_char=page_overlap_char,
+                    chunk_size=chunk_size,
+                    chunk_overlap_char=chunk_overlap_char,
+                    tolerance_rate=tolerance_rate,
+                    min_chunk_size=min_chunk_size
+                )
+            else:
+                result_extraction = metadata_document
+
+        case "sdg_knowledge":
+            result_extraction = extract_chunk(
+                text=md_text,
+                type_doc=type_doc,
+                source=source,
+                page_range=page_range,
+                special_page=special_page,
+                page_overlap_char=page_overlap_char,
+                chunk_size=chunk_size,
+                chunk_overlap_char=chunk_overlap_char,
+                tolerance_rate=tolerance_rate,
+                min_chunk_size=min_chunk_size
+            )
+        case _:
+            raise ValueError("Invalid Type of Document")
+        
+    
+
 
     if save_path != None:
         with open(save_path, "w", encoding="utf-8") as f:
-            json.dump(metadata_document, f, ensure_ascii=False, indent=2)
+            json.dump(result_extraction, f, ensure_ascii=False, indent=2)
     
-    logger.debug("[END] : Extracting Document (total chars: %s)", len(str(metadata_document)))
+    logger.debug("[END] : Extracting Document (total chars: %s)", len(str(result_extraction)))
 
-    return metadata_document
+    return result_extraction
 
 
-def input_document(path_file, source):
+def input_document(
+        path_file:str,
+        source:str = None,
+        type_doc: Literal["sdg_evidence", "sdg_knowledge"] = "sdg_evidence",
+        page_range: Optional[list[int]] = None,
+        special_page: list[int] = [],
+        page_overlap_char: int = 100,
+        chunk_size: int = 500,
+        chunk_overlap_char: int = 100,
+        tolerance_rate: float = 0.5,
+        min_chunk_size: int = 100,
+):
     """
-    **return**  metadata dari dokumen dengan key {'document_name', 'title', 'abstract', 'conclusion'}
+    Titik entry point untuk pemrosesan awal dokumen ke dalam sistem AI SDG.
+
+    Fungsi ini bertindak sebagai orkestrator yang memanggil `extract_document`. Perbedaan utamanya adalah fungsi ini melakukan standarisasi output;
+    jika hasil ekstraksi berupa potongan teks (chunks), maka akan secara otomatis dibungkus menjadi daftar objek `Document` agar kompatibel dengan modul pengolah teks selanjutnya.
+
+    Args:
+        path_file (str): Path lengkap menuju file dokumen yang akan diproses.
+        source (str, optional): Nama instansi atau sumber asal dokumen. Defaults to None.
+        type_doc (Literal["sdg_evidence", "sdg_knowledge"], optional): Klasifikasi dokumen untuk menentukan alur ekstraksi. "sdg_evidence" untuk bukti kinerja unit kerja, dan "sdg_knowledge" untuk referensi kriteria SDGs. Defaults to "sdg_evidence".
+
+    Returns:
+        Union[dict, List[Document]]: 
+            - Jika hasil ekstraksi adalah metadata tunggal, mengembalikan `dict` berisi metadata (title, abstract, conclusion, dll).
+            - Jika hasil ekstraksi adalah konten ter-chunk, mengembalikan `list` berisi objek `Document` (page_content & metadata).
     """
     logger.info("Preprocessing Document Input")
     result_extraction = extract_document(
         path_file=path_file,
-        type_doc="sdg_evidence",
-        source=source
+        type_doc=type_doc,
+        source=source,
+        page_range=page_range,
+        special_page=special_page,
+        page_overlap_char=page_overlap_char,
+        chunk_size=chunk_size,
+        chunk_overlap_char=chunk_overlap_char,
+        tolerance_rate=tolerance_rate,
+        min_chunk_size=min_chunk_size,
     )
 
-    # chunk_ids = []
-    # texts = []
-    # metadatas = []
+    if isinstance(result_extraction, list):
+        documents: list[Document] = []
 
-    # for i, (key, value) in enumerate(result_extraction.items()):
-    #     if key == "document_name":
-    #         continue
+        for item in result_extraction:
+            doc = Document(
+                page_content=item['text'],
+                metadata=item['metadata']
+            )
+            documents.append(doc)
 
-    #     chunk_ids.append(str(i))
-    #     texts.append(value)
-    #     metadatas.append({
-    #         "source": result_extraction["document_name"],
-    #         "type_text":key,
-    #     })
-
+        return documents
+    
     return result_extraction
-    # return chunk_ids, texts, metadatas

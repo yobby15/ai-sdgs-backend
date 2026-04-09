@@ -162,6 +162,7 @@ def split_and_clean_pages(
     add_overlap: bool=True,
     overlap_chars: int = 100,
     tolerance: int = 200,
+    page_range: list[int] = [],
     special_page: list[int] = []
 ) -> list[str]:
     """
@@ -191,6 +192,7 @@ def split_and_clean_pages(
             pages=cleaned_pages,
             overlap_chars=overlap_chars,
             tolerance=tolerance,
+            page_range=page_range,
             special_page=special_page
         )
 
@@ -201,12 +203,13 @@ def add_page_overlap(
     pages: list[str],
     overlap_chars: int = 100,
     tolerance: int = 200,
+    page_range: list[int] = [],
     special_page: list[int] = []
 ) -> list[str]:
     """
     Menambahkan overlap antar halaman.
-    Overlap diambil dari akhir halaman sebelumnya
-    tetapi tetap dipotong pada boundary terbaik.
+    
+    Overlap diambil dari akhir halaman sebelumnya tetapi tetap dipotong pada boundary terbaik.
     """
 
     if not pages:
@@ -215,10 +218,14 @@ def add_page_overlap(
     new_pages = [pages[0]]
     special_page = set(special_page)
 
+    if page_range:
+        start_page_index = page_range[0]
+    else:
+        start_page_index = 0
+
     for i in range(1, len(pages)):
-        if (i in special_page) or ((i-1) in special_page):
-            if i in special_page:
-                print(pages[i])
+        pages_number = i+start_page_index
+        if (pages_number in special_page) or (pages_number-1 in special_page):
             new_pages.append(pages[i])
             continue
 
@@ -296,6 +303,7 @@ def pages_to_json_format(
         pages: list[list[str]],
         source: str,
         type_doc: Literal["sdg_evidence", "sdg_knoledge"] = "sdg_evidence",
+        page_range: list[int, int] = [],
         ) -> list[dict]:
     """
     Mengubah data [page_list[chunk]] menjadi format JSON
@@ -304,10 +312,11 @@ def pages_to_json_format(
 
     results = []
     global_chunk_id = 0
+    start_page_index = page_range[0]
 
     for page_idx, chunks in enumerate(pages):
 
-        page_number = page_idx + 1
+        page_number = page_idx + 1 + start_page_index
 
         for chunk_idx, chunk_text in enumerate(chunks):
 
@@ -405,9 +414,10 @@ def extract_abstract(text: str) -> str:
     for pattern in ABSTRACT_WORDS_PATTERN:
         start_pattern = rf"(?im)\b{pattern}\b"
         abstract_candidate = _extract_section(text, start_section_pattern=start_pattern, end_section_pattern=END_ABSTRACT_PATTERN)
-        abstract_candidate = abstract_candidate.lstrip(" :\n\r\t")
-        if len(abstract_candidate) > 150:
-            return abstract_candidate
+        if abstract_candidate:
+            abstract_candidate = abstract_candidate.lstrip(" :\n\r\t")
+            if len(abstract_candidate) > 150:
+                return abstract_candidate
 
 
     blocks = re.split(r"\n\s*\n", text)
