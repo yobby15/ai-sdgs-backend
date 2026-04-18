@@ -5,6 +5,7 @@ from langchain_huggingface import HuggingFaceEmbeddings, ChatHuggingFace
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_qwq import ChatQwen
+from langchain_openrouter import ChatOpenRouter
 
 from langchain_core.messages import AIMessage
 
@@ -52,9 +53,18 @@ def test_llm_init_default():
 
 
 @pytest.mark.integration(type_init="llm")
-def test_llm_init_qwen():
-    llm = llm_agent_service.model_init(model_name="Qwen/Qwen3-Coder-Next", type_model="huggingface")
+def test_llm_init_huggingface():
+    llm = llm_agent_service.model_init(model_name="Qwen/Qwen3-Coder-Next", type_api="huggingface")
     assert isinstance(llm, ChatHuggingFace)
 
     result = llm.invoke("Hello Qwen")
+    assert isinstance(result, AIMessage)
+
+
+@pytest.mark.integration(type_init="llm")
+def test_llm_init_openrouter():
+    llm = llm_agent_service.model_init(model_name="nvidia/nemotron-3-super-120b-a12b:free", type_api="openrouter")
+    assert isinstance(llm, ChatOpenRouter)
+
+    result = llm.invoke("Hello nemo")
     assert isinstance(result, AIMessage)

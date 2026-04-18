@@ -67,7 +67,7 @@ def add_data_to_vdb(
     if ids is None:
         ids = []
         for i in range(len(documents)):
-            unique_id = str(uuid.uuid5(NAMESPACE_SDG, documents[i].page_content))
+            unique_id = str(uuid.uuid5(NAMESPACE_SDG, f"{documents[i].metadata}_{documents[i].page_content}"))
             ids.append(unique_id)
 
     elif len(ids) != len(documents):
@@ -75,7 +75,7 @@ def add_data_to_vdb(
         if len(ids) < len(documents):
             selisih = len(documents) - len(ids)
             for i in range(selisih):
-                unique_id = str(uuid.uuid5(NAMESPACE_SDG, texts[len(ids)]))
+                unique_id = str(uuid.uuid5(NAMESPACE_SDG, f"{documents[len(ids)].metadata}_{documents[len(ids)].page_content}"))
                 ids.append(unique_id)
         else:
             ids = ids[:len(documents)]

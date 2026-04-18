@@ -178,7 +178,7 @@ def extract_chunk(
         text: str,
         type_doc: Literal["sdg_evidence", "sdg_knowledge"],
         source: str,
-        page_range:list[int, int] = None,
+        start_page_index:int= 0,
         special_page: list[int] = [],
         page_overlap_char: int = 100,
         chunk_size: int = 500,
@@ -221,7 +221,7 @@ def extract_chunk(
 
     splitted_page = text_processing.split_and_clean_pages(
         text=text,
-        page_range=page_range,
+        start_page_index=start_page_index,
         special_page=special_page,
         overlap_chars=page_overlap_char,
         tolerance=round(tolerance_rate*page_overlap_char)
@@ -240,7 +240,8 @@ def extract_chunk(
     clean_extracted = text_processing.pages_to_json_format(
         chunked_content_per_page,
         type_doc=type_doc,
-        source=source
+        source=source,
+        start_page_index = start_page_index
     )
 
     return clean_extracted
@@ -300,6 +301,10 @@ def extract_document(
     })
 
     md_text = convert_to_md(path_file, page_range=page_range)
+    if page_range is not None:
+        start_page_index = page_range[0]
+    else:
+        start_page_index = 0
 
     match type_doc:
         case "sdg_evidence":
@@ -309,7 +314,7 @@ def extract_document(
                     text=md_text,
                     type_doc=type_doc,
                     source=source,
-                    page_range=page_range,
+                    start_page_index=start_page_index,
                     special_page=special_page,
                     page_overlap_char=page_overlap_char,
                     chunk_size=chunk_size,
@@ -325,7 +330,7 @@ def extract_document(
                 text=md_text,
                 type_doc=type_doc,
                 source=source,
-                page_range=page_range,
+                start_page_index=start_page_index,
                 special_page=special_page,
                 page_overlap_char=page_overlap_char,
                 chunk_size=chunk_size,

@@ -10,35 +10,35 @@ from typing import Literal
 logger = logging.getLogger(__name__)
 
 
-def matching_SDG(sdg_data_rows: list, inmemory_vdb, k:int = 10):
-    logger.info("Matching SDG Indicator")
-    all_matches = []
+# def matching_SDG(sdg_data_rows: list, inmemory_vdb, k:int = 10):
+#     logger.info("Matching SDG Indicator")
+#     all_matches = []
 
-    for row in sdg_data_rows:
-        sdg_vector = [json.loads(row["embedding"]) if not isinstance(row["embedding"], list) else row["embedding"]]
-        sdg_vector = np.array(sdg_vector).astype('float32')
-        faiss.normalize_L2(sdg_vector)
-        sdg_vector = sdg_vector.tolist()[0]
-        sdg_text = row["content"]
-        sdg_metadata = row["metadata"]
+#     for row in sdg_data_rows:
+#         sdg_vector = [json.loads(row["embedding"]) if not isinstance(row["embedding"], list) else row["embedding"]]
+#         sdg_vector = np.array(sdg_vector).astype('float32')
+#         faiss.normalize_L2(sdg_vector)
+#         sdg_vector = sdg_vector.tolist()[0]
+#         sdg_text = row["content"]
+#         sdg_metadata = row["metadata"]
         
-        # Cari k chunk tercocok untuk indikator
-        matched_docs = inmemory_vdb.similarity_search_with_score_by_vector(
-            embedding=sdg_vector, 
-            k=k
-        )
+#         # Cari k chunk tercocok untuk indikator
+#         matched_docs = inmemory_vdb.similarity_search_with_score_by_vector(
+#             embedding=sdg_vector, 
+#             k=k
+#         )
         
-        for doc, score in matched_docs:
-            all_matches.append({
-                "score": float(score),
-                "sdg_content": sdg_text,
-                "sdg_metadata": sdg_metadata,
-                "admin_content": doc.page_content,
-                "admin_metadata": doc.metadata
-            })
+#         for doc, score in matched_docs:
+#             all_matches.append({
+#                 "score": float(score),
+#                 "sdg_content": sdg_text,
+#                 "sdg_metadata": sdg_metadata,
+#                 "admin_content": doc.page_content,
+#                 "admin_metadata": doc.metadata
+#             })
 
-    sorted_match = sorted(all_matches, key=lambda x: x["score"], reverse=True)
-    return sorted_match
+#     sorted_match = sorted(all_matches, key=lambda x: x["score"], reverse=True)
+#     return sorted_match
 
 
 
@@ -96,7 +96,7 @@ def build_graph_prompt(
     return retrieval_result
 
 
-def metadata_retrival_SDG(metadata_article: dict, vdb: SupabaseVectorStore, k=10):
+def metadata_retrival_SDG(metadata_article: dict, vdb: SupabaseVectorStore, k=10, instruction: bool = False):
     logger.info("Retrieval: Matching SDG Indicator from metadata document")
     all_matches = []
 
@@ -104,8 +104,13 @@ def metadata_retrival_SDG(metadata_article: dict, vdb: SupabaseVectorStore, k=10
         if key == "document_name":
             continue
 
-        query = value
         type_metadata = key
+        if instruction:
+            task_instruct = task = f'Given a {type_metadata} of university administrative document, retrieve relevant SDG indicators and scoring criteria from the THE Impact Ratings 2026'
+            query = f'Instruct: {task_instruct}\nQuery: {value}'
+        else:
+            query = value
+
         matches_docs = vdb.similarity_search_with_relevance_scores(query, k=k)
 
         for doc, score in matches_docs:
@@ -113,7 +118,7 @@ def metadata_retrival_SDG(metadata_article: dict, vdb: SupabaseVectorStore, k=10
                 "score": float(score),
                 "sdg_content": doc.page_content,
                 "sdg_metadata": doc.metadata,
-                "admin_content": query,
+                "admin_content": value,
                 "admin_metadata": {
                     "type_metadata":type_metadata,
                     "global_chunk_id":i,

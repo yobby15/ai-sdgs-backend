@@ -1,10 +1,16 @@
 import logging
 from supabase.client import Client, create_client
 from langchain_community.vectorstores import SupabaseVectorStore
+import os
 
 logger = logging.getLogger(__name__)
 
-def supabase_init(supabase_url: str, supabase_service_key: str):
+def supabase_init(supabase_url: str = None, supabase_service_key: str = None):
+    if supabase_url is None:
+        supabase_url = os.getenv("SUPABASE_URL")
+
+    if supabase_service_key is None:
+        supabase_service_key = os.getenv("SUPABASE_SERVICE_KEY")
     supabase: Client = create_client(supabase_url, supabase_service_key)
     return supabase
 

@@ -162,7 +162,8 @@ def split_and_clean_pages(
     add_overlap: bool=True,
     overlap_chars: int = 100,
     tolerance: int = 200,
-    page_range: list[int] = [],
+    start_page_index: int = 0,
+    # page_range: list[int] = [],
     special_page: list[int] = []
 ) -> list[str]:
     """
@@ -192,7 +193,8 @@ def split_and_clean_pages(
             pages=cleaned_pages,
             overlap_chars=overlap_chars,
             tolerance=tolerance,
-            page_range=page_range,
+            start_page_index=start_page_index,
+            # page_range=page_range,
             special_page=special_page
         )
 
@@ -203,7 +205,8 @@ def add_page_overlap(
     pages: list[str],
     overlap_chars: int = 100,
     tolerance: int = 200,
-    page_range: list[int] = [],
+    start_page_index: int = 0,
+    # page_range: list[int] = [],
     special_page: list[int] = []
 ) -> list[str]:
     """
@@ -218,10 +221,6 @@ def add_page_overlap(
     new_pages = [pages[0]]
     special_page = set(special_page)
 
-    if page_range:
-        start_page_index = page_range[0]
-    else:
-        start_page_index = 0
 
     for i in range(1, len(pages)):
         pages_number = i+start_page_index
@@ -303,7 +302,8 @@ def pages_to_json_format(
         pages: list[list[str]],
         source: str,
         type_doc: Literal["sdg_evidence", "sdg_knoledge"] = "sdg_evidence",
-        page_range: list[int, int] = [],
+        start_page_index: int = 0,
+        # page_range: list[int, int] = [],
         ) -> list[dict]:
     """
     Mengubah data [page_list[chunk]] menjadi format JSON
@@ -312,7 +312,6 @@ def pages_to_json_format(
 
     results = []
     global_chunk_id = 0
-    start_page_index = page_range[0]
 
     for page_idx, chunks in enumerate(pages):
 

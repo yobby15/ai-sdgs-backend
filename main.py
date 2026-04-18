@@ -86,15 +86,20 @@ def analyze_document(
         full_prompt = prompt_value.to_string()
 
         logger.info("Send prompt to LLM")
+        llm_execution_status = False
         try:
             logger.debug("[START] : LLM Agent Analyzing (total chars in prompt:%s)", len(full_prompt))
             llm_output = llm.invoke(prompt_value)
             logger.debug("[END] : LLM Agent Analyzing")
+            llm_execution_status = True
         except Exception as e:
             logger.error("Terjadi error pada LLM\n\n%s", e)
-            raise
+            # raise
 
-        final_result = text_processing.repair_llm_json(llm_output.content)
+        if llm_execution_status:
+            final_result = text_processing.repair_llm_json(llm_output.content)
+        else:
+            final_result = None
 
         time_execution = time.time() - start_time
         json_result = {
@@ -103,7 +108,7 @@ def analyze_document(
                 "model_name": model_name,
                 "time_execution": time_execution,
                 "input_model": full_prompt,
-                "output_model": llm_output.model_dump(),
+                "output_model": llm_output.model_dump() if llm_execution_status else None,
                 "result":final_result
         }
 
@@ -178,17 +183,17 @@ def main(
             logger.error("Save Path Folder (%s) not found", save_path)
             return f"Save Path Folder ({save_path}) not found"
     
-    source = os.path.basename(path_file) if source == None else source
+    source = os.path.basename(path_file) if source is None else source
 
     # Initiation
     logger.info("Initiation Process")
     logger.debug("[START] : Initiation Process")
-    embeddings = embedding_service.embedding_init()
+    embeddings = embedding_service.embedding_init(model_name="microsoft/harrier-oss-v1-0.6b", type_run="huggingface_inference")
     supabase = supabase_service.supabase_init(supabase_url=os.getenv("SUPABASE_URL"), supabase_service_key=os.getenv("SUPABASE_SERVICE_KEY"))
     supabase_vdb = supabase_service.supabase_vdb_init(supabase=supabase, embeddings=embeddings)
     # inmemory_vdb = inmemory_vdb_service.inmemory_vdb_init(embeddings=embeddings, vector_length=1024)
     if type_run == "analyze_document":
-        llm_agent = llm_agent_service.model_init(model_name="Qwen/Qwen3-Coder-Next", type_model="huggingface")
+        llm_agent = llm_agent_service.model_init(model_name="nvidia/nemotron-3-super-120b-a12b:free", type_api="openrouter")
         chat_prompt = prompt_agent.FULL_CHAT_PROMPT
     logger.debug("[END] : Initiation Process")
 
@@ -219,14 +224,15 @@ def main(
 
 
 if __name__ == "__main__":
-    main(
-        path_file="./data/SDGs_knowledge_dataset/Sustainability Impact Ratings Methodology 2026.pdf",
-        type_run="add_sdg_knowledge",
-        page_range=[10,153],
-        special_page=[10, 19, 30, 36, 42, 54, 63, 71, 80, 86, 97, 106, 114, 122, 131, 138, 146]
-    )
-
     # main(
-    #     path_file="./data/Sample Documents/jurnal-unesa/ACHMAD KAUTSAR_4.pdf",
-    #     save_path="./ai_result/"
+    #     path_file="./data/SDGs_knowledge_dataset/Sustainability Impact Ratings Methodology 2026.pdf",
+    #     type_run="add_sdg_knowledge",
+    #     page_range=[10,153],
+    #     special_page=[10, 19, 30, 36, 42, 54, 63, 71, 80, 86, 97, 106, 114, 122, 131, 138, 146]
     # )
+
+    main(
+        path_file="./data/Sample Documents/jurnal-unesa/ACHMAD KAUTSAR_4.pdf",
+        save_path="./ai_result/",
+        type_run="analyze_document"
+    )
