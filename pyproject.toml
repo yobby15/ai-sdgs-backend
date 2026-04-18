@@ -17,6 +17,7 @@ dependencies = [
     "langchain-core>=1.2.17",
     "langchain-google-genai>=4.2.1",
     "langchain-huggingface>=1.2.1",
+    "langchain-openrouter>=0.1.0",
     "langchain-qwq>=0.3.4",
     "pymupdf4llm>=1.27.2.1",
     "pytest>=9.0.2",

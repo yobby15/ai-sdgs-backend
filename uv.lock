@@ -7,55 +7,6 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "aisdg"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "dotenv" },
-    { name = "faiss-cpu" },
-    { name = "fastapi" },
-    { name = "huggingface-hub" },
-    { name = "ipykernel" },
-    { name = "ipywidgets" },
-    { name = "langchain" },
-    { name = "langchain-chroma" },
-    { name = "langchain-community" },
-    { name = "langchain-core" },
-    { name = "langchain-google-genai" },
-    { name = "langchain-huggingface" },
-    { name = "langchain-qwq" },
-    { name = "pymupdf4llm" },
-    { name = "pytest" },
-    { name = "sentence-transformers" },
-    { name = "supabase" },
-    { name = "tqdm" },
-    { name = "transformers" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "dotenv", specifier = ">=0.9.9" },
-    { name = "faiss-cpu", specifier = ">=1.13.2" },
-    { name = "fastapi", specifier = ">=0.135.1" },
-    { name = "huggingface-hub", specifier = ">=1.6.0" },
-    { name = "ipykernel", specifier = ">=7.2.0" },
-    { name = "ipywidgets", specifier = ">=8.1.8" },
-    { name = "langchain", specifier = ">=1.2.10" },
-    { name = "langchain-chroma", specifier = ">=1.1.0" },
-    { name = "langchain-community", specifier = ">=0.4.1" },
-    { name = "langchain-core", specifier = ">=1.2.17" },
-    { name = "langchain-google-genai", specifier = ">=4.2.1" },
-    { name = "langchain-huggingface", specifier = ">=1.2.1" },
-    { name = "langchain-qwq", specifier = ">=0.3.4" },
-    { name = "pymupdf4llm", specifier = ">=1.27.2.1" },
-    { name = "pytest", specifier = ">=9.0.2" },
-    { name = "sentence-transformers", specifier = ">=5.2.3" },
-    { name = "supabase", specifier = "==2.15.2" },
-    { name = "tqdm", specifier = ">=4.67.3" },
-    { name = "transformers", specifier = ">=5.3.0" },
-]
-
-[[package]]
 name = "aiohappyeyeballs"
 version = "2.6.1"
 source = { registry = "https://pypi.org/simple" }
@@ -142,6 +93,57 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/61/62/06741b579156360248d1ec624842ad0edf697050bbaf7c3e46394e106ad1/aiosignal-1.4.0.tar.gz", hash = "sha256:f47eecd9468083c2029cc99945502cb7708b082c232f9aca65da147157b251c7", size = 25007, upload-time = "2025-07-03T22:54:43.528Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/fb/76/641ae371508676492379f16e2fa48f4e2c11741bd63c48be4b12a6b09cba/aiosignal-1.4.0-py3-none-any.whl", hash = "sha256:053243f8b92b990551949e63930a839ff0cf0b0ebbe0597b0f3fb19e1a0fe82e", size = 7490, upload-time = "2025-07-03T22:54:42.156Z" },
+]
+
+[[package]]
+name = "aisdg"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "dotenv" },
+    { name = "faiss-cpu" },
+    { name = "fastapi" },
+    { name = "huggingface-hub" },
+    { name = "ipykernel" },
+    { name = "ipywidgets" },
+    { name = "langchain" },
+    { name = "langchain-chroma" },
+    { name = "langchain-community" },
+    { name = "langchain-core" },
+    { name = "langchain-google-genai" },
+    { name = "langchain-huggingface" },
+    { name = "langchain-openrouter" },
+    { name = "langchain-qwq" },
+    { name = "pymupdf4llm" },
+    { name = "pytest" },
+    { name = "sentence-transformers" },
+    { name = "supabase" },
+    { name = "tqdm" },
+    { name = "transformers" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "dotenv", specifier = ">=0.9.9" },
+    { name = "faiss-cpu", specifier = ">=1.13.2" },
+    { name = "fastapi", specifier = ">=0.135.1" },
+    { name = "huggingface-hub", specifier = ">=1.6.0" },
+    { name = "ipykernel", specifier = ">=7.2.0" },
+    { name = "ipywidgets", specifier = ">=8.1.8" },
+    { name = "langchain", specifier = ">=1.2.10" },
+    { name = "langchain-chroma", specifier = ">=1.1.0" },
+    { name = "langchain-community", specifier = ">=0.4.1" },
+    { name = "langchain-core", specifier = ">=1.2.17" },
+    { name = "langchain-google-genai", specifier = ">=4.2.1" },
+    { name = "langchain-huggingface", specifier = ">=1.2.1" },
+    { name = "langchain-openrouter", specifier = ">=0.1.0" },
+    { name = "langchain-qwq", specifier = ">=0.3.4" },
+    { name = "pymupdf4llm", specifier = ">=1.27.2.1" },
+    { name = "pytest", specifier = ">=9.0.2" },
+    { name = "sentence-transformers", specifier = ">=5.2.3" },
+    { name = "supabase", specifier = "==2.15.2" },
+    { name = "tqdm", specifier = ">=4.67.3" },
+    { name = "transformers", specifier = ">=5.3.0" },
 ]
 
 [[package]]
@@ -1484,6 +1486,19 @@ wheels = [
 ]
 
 [[package]]
+name = "langchain-openrouter"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "langchain-core" },
+    { name = "openrouter" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4e/6e/6e8a4156da07ba4827030302abad3b3e3c757f3c186f9cbb448d87cdd6fb/langchain_openrouter-0.1.0.tar.gz", hash = "sha256:3321fdab013a7bf370391497553a61a0368f81955128ceee020a815912bdbd62", size = 151982, upload-time = "2026-03-04T21:09:55.214Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c0/7a/e371200933a0091f62a7bc2011eb2894539f9fd21b31625f650aa3496519/langchain_openrouter-0.1.0-py3-none-any.whl", hash = "sha256:263a2d6e133a8a39cacafe499a7c29a191e39af8352e6f177d73af78673ebe8d", size = 18723, upload-time = "2026-03-04T21:09:54.315Z" },
+]
+
+[[package]]
 name = "langchain-qwq"
 version = "0.3.4"
 source = { registry = "https://pypi.org/simple" }
@@ -2105,6 +2120,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/56/87/eb0abb4ef88ddb95b3c13149384c4c288f584f3be17d6a4f63f8c3e3c226/openai-2.28.0.tar.gz", hash = "sha256:bb7fdff384d2a787fa82e8822d1dd3c02e8cf901d60f1df523b7da03cbb6d48d", size = 670334, upload-time = "2026-03-13T19:56:27.306Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c0/5a/df122348638885526e53140e9c6b0d844af7312682b3bde9587eebc28b47/openai-2.28.0-py3-none-any.whl", hash = "sha256:79aa5c45dba7fef84085701c235cf13ba88485e1ef4f8dfcedc44fc2a698fc1d", size = 1141218, upload-time = "2026-03-13T19:56:25.46Z" },
+]
+
+[[package]]
+name = "openrouter"
+version = "0.8.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpcore" },
+    { name = "httpx" },
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/39/52/4f9fdb605c8d4ecc106a55bb034f09f8f4270bd11b0e7ad3f05f2d52a8e3/openrouter-0.8.1.tar.gz", hash = "sha256:d272f743a58ed34827d531f48e3745f5eea0dd11ab0d4022e49106286f6f358a", size = 163740, upload-time = "2026-04-02T14:23:41.457Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d8/96/d168d2a28dc1be4e33e05d1656ceb9466f844211e6ffbba389804fbb5a84/openrouter-0.8.1-py3-none-any.whl", hash = "sha256:b8ec0711eb2971560cf8a5a6fbd5c52e3d704c58ab310f72ecf05ba567534513", size = 337196, upload-time = "2026-04-02T14:23:40.263Z" },
 ]
 
 [[package]]
