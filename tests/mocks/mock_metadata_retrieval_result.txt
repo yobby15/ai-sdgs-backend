@@ -1,0 +1,159 @@
+MAP HUBUNGAN:
+[
+  {
+    "input_doc_chunk_id": "title",
+    "SDG_reference_chunk_id": 384,
+    "similarity_score": 0.392764853854807
+  },
+  {
+    "input_doc_chunk_id": "title",
+    "SDG_reference_chunk_id": 407,
+    "similarity_score": 0.388139466566316
+  },
+  {
+    "input_doc_chunk_id": "title",
+    "SDG_reference_chunk_id": 343,
+    "similarity_score": 0.372014946621556
+  },
+  {
+    "input_doc_chunk_id": "conclusion",
+    "SDG_reference_chunk_id": 384,
+    "similarity_score": 0.370310464159765
+  },
+  {
+    "input_doc_chunk_id": "title",
+    "SDG_reference_chunk_id": 288,
+    "similarity_score": 0.367085124780872
+  },
+  {
+    "input_doc_chunk_id": "title",
+    "SDG_reference_chunk_id": 383,
+    "similarity_score": 0.366222186364179
+  },
+  {
+    "input_doc_chunk_id": "abstract",
+    "SDG_reference_chunk_id": 382,
+    "similarity_score": 0.362992469453408
+  },
+  {
+    "input_doc_chunk_id": "abstract",
+    "SDG_reference_chunk_id": 374,
+    "similarity_score": 0.358395879422978
+  },
+  {
+    "input_doc_chunk_id": "conclusion",
+    "SDG_reference_chunk_id": 407,
+    "similarity_score": 0.355031209419802
+  },
+  {
+    "input_doc_chunk_id": "conclusion",
+    "SDG_reference_chunk_id": 383,
+    "similarity_score": 0.35387412687511
+  },
+  {
+    "input_doc_chunk_id": "abstract",
+    "SDG_reference_chunk_id": 386,
+    "similarity_score": 0.349271218045025
+  },
+  {
+    "input_doc_chunk_id": "conclusion",
+    "SDG_reference_chunk_id": 343,
+    "similarity_score": 0.345273712068998
+  },
+  {
+    "input_doc_chunk_id": "conclusion",
+    "SDG_reference_chunk_id": 288,
+    "similarity_score": 0.344954621422157
+  },
+  {
+    "input_doc_chunk_id": "abstract",
+    "SDG_reference_chunk_id": 383,
+    "similarity_score": 0.343892585537964
+  },
+  {
+    "input_doc_chunk_id": "abstract",
+    "SDG_reference_chunk_id": 407,
+    "similarity_score": 0.343484004378859
+  }
+]
+
+ISI CHUNK (DOKUMEN INPUT):
+[abstract]: _ 
+
+Industrial development real estate and properties in Indonesia drove the rapid post-financial crisis in 1998, indicated by increasing capacity of national property and reduced level of NPL property loans. On the other, the distribution of dividend to shareholders decreased, even many who do not share. The research was also supported by the existence of the research gap from previous studies. This study aims to examine the influence of Return On Equity (ROE), Debt to Equity Ratio (DER), Investment Opportunity Set (IOS), and Inflation toward Dividend Payout Ratio (DPR) on property and real estate companies which listed on Indonesian Stock Exchange 2006-2009. Data sample amount of 6 companies from 41 companies those listed on Indonesian Stock Exchange. The analysis indicates that ROE variable partially significant toward DPR in property and real estate company which is listed in BEI over period 2006- 2009. While the DER, IOS and Inflation variable partially not significant toward DPR.
+
+
+[conclusion]: Penelitian ini dilakukan dengan tujuan untuk mengetahui faktor apa saja yang mempengaruhi _Divedend Payout Ratio_ . Berdasarkan analisis hasil penelitian yang telah dilakukan, maka dapat ditarik kesimpulan sebagai berikut : 
+
+1. Berdasarkan hipotesis pertama menunjukkan bahwa terdapat  pengaruh _Return On Equity_ (ROE), _Debt to Equity Ratio_ (DER), _Investment Set Opportunity_ (IOS), dan tingkat Inflasi secara bersama-sama yang signifikan terhadap _Dividend Payout Ratio_ (DPR) pada perusahaan _property and real estate_ yang _listed_ di BEI tahun 2006-2009. Dari hasil ini pengaruh ROE terhadap DPR adalah lebih dominan dibanding variabel lain. Hal ini dikarenakan kebijakan dividen menyangkut tentang penggunaan laba yang menjadi hak para pemegang saham. Jadi besar kecilnya dividen yang dibagikan dipengaruhi sangat dominan oleh kemampuan perusahaan dalam menghasikan laba (yang dalam penelitian ini diukur melalui rasio ROE). 
+
+2. Berdasarkan hipotesis kedua menunjukkan bahwa secara parsial terdapat  pengaruh yang signifikan _Return On Equity_ (ROE)  terhadap _Dividend Payout Ratio_ (DPR). Namun pada pengujian _Debt to Equity Ratio_ (DER), _Investment Set Opportunity_ (IOS), dan tingkat Inflasi menunjukkan bahwa secara parsial tidak terdapat pengaruh terhadap _Dividend Payout Ratio_ (DPR) pada perusahaan _property and real estate_ yang _listed_ di BEI tahun 20062009.
+Berdasarkan kesimpulan dapat disarankan hal-hal sebagai berikut: 
+
+1. Bagi Investor 
+
+   - Untuk investor yang mengharapkan return dari perusahaan _property and real estate_ berupa dividen baiknya mengukur tingkat _Return On Equity_ (ROE) perusahaan. 
+
+2. Bagi Emiten Hasil penelitian ini diharapkan digunakan sebagai bahan pertimbangan untuk meningkatkan maupun menjaga kinerja perusahaan guna meningkatkan ROE demi menyejahterakan pemegang saham. 
+
+3. Bagi Penelitian yang mendatang diharapkan peneliti selanjutnya dapat memperpanjang periode penelitian, utamanya menneliti sampai tahun 2010, karena pada penelitian ini data laporan keuangan perusahaan tahun 2010 sebagian belum terselesaikan, mengingat investor lebih melihat prediksi jangka panjang dibanding prediksi jangka waktu yang relatif pendek. Selain itu diharapkan peneliti selanjutnya yang mengukur variabel _Debt to Equity Ratio_ (DER) terhadap dividen perusahaan agar memperhatikan darimana sumber dana hutang tersebut serta jenis bunga apa yang diterapkan dalam hutang perusahaan tersebut. Hal ini dikarenakan biaya bunga dapat mengurangi besar kecilnya laba perusahaan, sementara laba adalah faktor utama yang mempengaruhi besar kecilnya dividen. Kemudian peneliti selanjutnya dapat mengukur variabel Inflasi terhadap dividen perusahaan agar memperpanjang periode penelitian, mengingat data cross section antara perusahaan pertama dengan perusahaan kedua pada satuan tahun adalah sama. Jadi dibutuhkan variasi data yang lebih banyak dengan memperpanjang periode penelitian.
+
+
+[title]: PENGARUH RETURN ON EQUITY (ROE), DEBT TO EQUITY RATIO (DER), INVESTMENT OPPORTUNITY SET (IOS), DAN INFLASI TERHADAP DIVIDEND PAYOUT RATIO (DPR) (Studi : Pada Perusahaan Property and Real Estate yang Listed di BEI Tahun 2006-2009)
+
+
+
+ISI CHUNK (SDG REFERENCES):
+[384]: This metric reflects the ability of the university to generate new research income from industry and commerce, and is also used in the Times Higher Education World University Rankings. It measures the amount of research income an institution earns from industry (adjusted for PPP), scaled against the number of academic staff it employs.
+
+
+[407]: This indicator explores the quality of a university’s output in the area of Reduced Inequalities research using the number of citations received as a metric. 
+
+This number is normalised by publication type (paper, review, conference proceeding, book, or book chapter), by year of publication, and by subject. Subjects are defined using Elsevier’s ASJC classification. 
+
+This indicator is normalised and is worth 10% of the score in this SDG (equivalent to 2.6% of the overall score).
+
+
+[343]: The metric is calculated by dividing the university expenditure by the number of employees, and is then normalised by the regional GDP per capita. This gives us a measure of the relative value to the region in which the university is situated that is independent of institution size. 
+
+The metric relates to the UN Targets 8.1 and 8.4. 
+
+This indicator is normalised and is worth 15.40% of the score in this SDG (equivalent to 4% of the overall score).
+
+
+[288]: This indicator explores the quality of a university’s output in the area of energy and energy efficiency research using the number of citations received as a metric. 
+
+This number is normalised by publication type (paper, review, conference proceeding, book, or book chapter), by year of publication, and by subject. Subjects are defined using Elsevier’s ASJC classification. 
+
+This indicator is normalised and is worth 10% of the score in this SDG (equivalent to 2.6% of the overall score).
+
+
+[383]: - **9.4 Research income from industry and commerce** 
+
+## **Year: 2024** 
+
+This metric reflects the ability of the university to generate new research income from industry and commerce, and is also used in the Times Higher Education World University Rankings. It measures the amount of research income an institution earns from industry (adjusted for PPP), scaled against the number of academic staff it employs.
+
+
+[382]: This definition looks at spin-offs that took place on or after January 1, 2000. The spin-off must still be trading/still be active.## **SDG 9** Industry, Innovation and Infrastructure 
+
+- **9.4 Research income from industry and commerce** 
+
+## **Year: 2024**
+
+
+[374]: This indicator is normalised and is worth 15.40% of the score in this SDG (equivalent to 4% of the overall score).## **SDG 9** Industry, Innovation and Infrastructure 
+
+## **9.3 University spin offs Year: 2024** 
+
+Another measure of a university’s innovation is the creation of new companies directly from the research at the institution.
+
+
+[386]: This indicator is normalised and is worth 38.40% of the score in this SDG (equivalent to 9.98% of the overall score). 
+
+## **9.4.1 Indicator: Research income from industry and commerce per academic staff** 
+
+|**Data Collected**|**Definition**|
+|---|---|
+
+
