@@ -21,6 +21,7 @@ dependencies = [
     "langchain-qwq>=0.3.4",
     "pymupdf4llm>=1.27.2.1",
     "pytest>=9.0.2",
+    "python-multipart>=0.0.26",
     "sentence-transformers>=5.2.3",
     "supabase==2.15.2",
     "tqdm>=4.67.3",

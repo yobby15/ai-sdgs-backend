@@ -69,9 +69,9 @@ def test_chunk_text(generate_md):
 
 
 @pytest.mark.unit
-def test_build_graph_prompt(generate_matched_sdg, load_inmemory_vdb):
+def test_build_graph_prompt(generate_matched_sdg):
     matched_sdg = generate_matched_sdg
-    retrieval_result = retrieval.build_graph_prompt(matched_sdg[:10], load_inmemory_vdb, window_size=2)
+    retrieval_result = retrieval.build_graph_prompt(matched_sdg[:10], type_input_retrieval="chunk")
 
     assert isinstance(retrieval_result, str)
     assert len(retrieval_result) > 100
