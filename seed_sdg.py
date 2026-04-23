@@ -225,7 +225,7 @@ def seed(
 
     logger.info("Memuat embedding model...")
     try:
-        embeddings = embedding_init()
+        embeddings = embedding_init(model_name="microsoft/harrier-oss-v1-0.6b", type_run="huggingface_inference")
     except Exception as e:
         print_err(f"Gagal memuat embedding model: {e}")
         raise

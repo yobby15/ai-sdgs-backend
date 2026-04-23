@@ -5,7 +5,7 @@ from app.utils import text_processing
 
 from langchain_community.vectorstores import SupabaseVectorStore
 
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
@@ -42,17 +42,19 @@ logger = logging.getLogger(__name__)
 
 SAVE_PATH = os.getenv("RESULT_SAVE_PATH", "./ai_result")
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
-
+MAX_FILE_SIZE = 10 * 1024 * 1024
 
 class AnalyzeResponse(BaseModel):
     id_request: str
     timestamp: str
     model_name: str
     time_execution: float
-    result: dict | list | str
+    result: dict | list | str | None
 
 
-app_state: dict = {}
+app_state: dict = {
+    "jobs": {}
+}
 
 
 @functools.lru_cache(maxsize=8)
@@ -67,7 +69,7 @@ async def lifespan(app: FastAPI):
     """Inisiasi resource berat saat startup, cleanup saat shutdown."""
     logger.info("=== [STARTUP] Inisiasi services ===")
 
-    app_state["embeddings"] = embedding_service.embedding_init()
+    app_state["embeddings"] = embedding_service.embedding_init(model_name="microsoft/harrier-oss-v1-0.6b", type_run="huggingface_inference")
     app_state["supabase"] = supabase_service.supabase_init(
         supabase_url=os.getenv("SUPABASE_URL"),
         supabase_service_key=os.getenv("SUPABASE_SERVICE_KEY"),
@@ -86,7 +88,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="AI SDG Scoring API",
     description="Analisis dokumen PDF dan cocokkan dengan indikator SDG menggunakan LLM.",
-    version="0.2.0",
+    version="0.3.0",
     lifespan=lifespan,
 )
 
@@ -146,7 +148,6 @@ def analyze_document(
         raise
 
     final_result = text_processing.repair_llm_json(llm_output.content) if llm_execution_status else None
-
     time_execution = time.time() - start_time
 
     json_result = {
@@ -172,13 +173,52 @@ def analyze_document(
     return json_result
 
 
+def process_analysis_task(
+        job_id: str, 
+        tmp_path: str, 
+        tmp_dir: str, 
+        doc_source: str, 
+        supabase_vdb, 
+        llm, 
+        chat_prompt, 
+        k: int, 
+        save_result: bool
+):
+    """Fungsi yang berjalan di background untuk memproses dokumen."""
+    app_state["jobs"][job_id] = {"status": "processing", "result": None, "error": None}
+    
+    try:
+        logger.info(f"Memulai job {job_id} untuk dokumen: {doc_source}")
+        result = analyze_document(
+            path_file=tmp_path,
+            source=doc_source,
+            supabase_vdb=supabase_vdb,
+            llm=llm,
+            chat_prompt=chat_prompt,
+            k=k,
+            save_result=save_result,
+        )
+        app_state["jobs"][job_id] = {"status": "completed", "result": result, "error": None}
+        logger.info(f"Job {job_id} selesai (%.2fs)", result["time_execution"])
+
+    except Exception as e:
+        logger.exception(f"Error pada job {job_id}: {str(e)}")
+        app_state["jobs"][job_id] = {"status": "failed", "result": None, "error": str(e)}
+
+    finally:
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
 def add_sdg_knowledge(
         path_file: str,
         source: str,
         supabase_vdb: SupabaseVectorStore,
         page_range: list[int] = None,
-        special_page: list[int] = []
+        special_page: list[int] = None
 ):
+    if special_page is None:
+        special_page = []
+
     logger.debug("[START] : Adding SDG Knowledge")
     start_time = time.time()
     extraction_result = input_doc.input_document(
@@ -214,88 +254,99 @@ def health():
     }
 
 
-@app.post("/analyze", tags=["Analisis"], response_model=AnalyzeResponse)
-async def analyze(
-    file: UploadFile = File(..., description="File PDF yang akan dianalisis"),
+@app.post("/analyze", tags=["Analisis"])
+async def analyze_async(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(..., description="File PDF yang akan dianalisis (Max 10MB)"),
     source: Optional[str] = None,
     k: int = 10,
-    model_name: str = "gemini-2.5-flash",
-    type_api: Literal["gemini", "huggingface", "openai", "qwen", "openrouter"] = "gemini",
+    model_name: str = "nvidia/nemotron-3-super-120b-a12b:free",
+    type_api: Literal["gemini", "huggingface", "openai", "qwen", "openrouter"] = "openrouter",
     save_result: bool = True,
 ):
     """
-    Upload file PDF dan analisis kesesuaiannya dengan indikator SDG.
-
-    - **file**: File PDF (wajib)
-    - **source**: Nama sumber dokumen (opsional, default = nama file)
-    - **k**: Jumlah top match yang diambil (default 10)
-    - **model_name**: Nama model LLM
-    - **type_api**: Provider model (`gemini`, `huggingface`, `openai`, `qwen`, `openrouter`)
-    - **save_result**: Simpan hasil ke file JSON (default True)
+    Upload file PDF dan masukkan ke antrean analisis secara asinkron.
+    Mengembalikan job_id yang bisa dicek melalui GET /analyze/{job_id}.
     """
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Hanya file PDF yang diterima.")
 
+    file_size = 0
+    file.file.seek(0, 2)
+    file_size = file.file.tell()
+    file.file.seek(0)
+    
+    if file_size > MAX_FILE_SIZE:
+        raise HTTPException(status_code=413, detail=f"Ukuran file melebihi batas maksimal ({MAX_FILE_SIZE / (1024*1024)}MB).")
+
     tmp_dir = tempfile.mkdtemp()
     tmp_path = os.path.join(tmp_dir, file.filename)
-
+    
     try:
         with open(tmp_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-
-        doc_source = source or file.filename
-        supabase_vdb = app_state["supabase_vdb"]
-        chat_prompt = app_state["chat_prompt"]
-        llm = get_llm(model_name=model_name, type_api=type_api)
-
-        logger.info("Mulai analisis dokumen: %s", doc_source)
-
-        json_result = await run_in_threadpool(
-            analyze_document,
-            path_file=tmp_path,
-            source=doc_source,
-            supabase_vdb=supabase_vdb,
-            llm=llm,
-            chat_prompt=chat_prompt,
-            k=k,
-            save_result=save_result,
-        )
-
-        logger.info("Analisis selesai: %s (%.2fs)", doc_source, json_result["time_execution"])
-
-        return AnalyzeResponse(
-            id_request=json_result["id_request"],
-            timestamp=json_result["timestamp"],
-            model_name=json_result["model_name"],
-            time_execution=json_result["time_execution"],
-            result=json_result["result"],
-        )
-
     except Exception as e:
-        logger.exception("Error saat analisis dokumen: %s", str(e))
-        raise HTTPException(status_code=500, detail=f"Terjadi error: {str(e)}")
-
-    finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
+        raise HTTPException(status_code=500, detail=f"Gagal menyimpan file: {str(e)}")
+
+    doc_source = source or file.filename
+    supabase_vdb = app_state["supabase_vdb"]
+    chat_prompt = app_state["chat_prompt"]
+    llm = get_llm(model_name=model_name, type_api=type_api)
+    
+    job_id = str(uuid.uuid4())
+
+    background_tasks.add_task(
+        process_analysis_task,
+        job_id=job_id,
+        tmp_path=tmp_path,
+        tmp_dir=tmp_dir,
+        doc_source=doc_source,
+        supabase_vdb=supabase_vdb,
+        llm=llm,
+        chat_prompt=chat_prompt,
+        k=k,
+        save_result=save_result
+    )
+
+    return {
+        "status": "accepted",
+        "job_id": job_id,
+        "message": "Dokumen sedang dianalisis di latar belakang. Gunakan job_id untuk mengecek status."
+    }
+
+
+@app.get("/analyze/{job_id}", tags=["Analisis"])
+def get_analysis_status(job_id: str):
+    """
+    Mengecek status dan mengambil hasil dari analisis dokumen.
+    """
+    job = app_state["jobs"].get(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job ID tidak ditemukan.")
+    
+    return job
 
 
 @app.post("/seed", tags=["Knowledge Base"])
 async def seed_knowledge(
-    file: UploadFile = File(..., description="File PDF SDG Methodology"),
+    file: UploadFile = File(..., description="File PDF SDG Methodology (Max 10MB)"),
     source: Optional[str] = None,
     page_start: int = 0,
     page_end: Optional[int] = None,
 ):
     """
     Upload file PDF SDG Methodology dan tambahkan ke vector database Supabase.
-
-    - **file**: File PDF SDG Methodology (wajib)
-    - **source**: Nama sumber dokumen (opsional, default = nama file)
-    - **page_start**: Halaman mulai ekstraksi (default 0)
-    - **page_end**: Halaman akhir ekstraksi (opsional)
     """
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Hanya file PDF yang diterima.")
+
+    file.file.seek(0, 2)
+    file_size = file.file.tell()
+    file.file.seek(0)
+    
+    if file_size > MAX_FILE_SIZE:
+        raise HTTPException(status_code=413, detail=f"Ukuran file melebihi batas maksimal ({MAX_FILE_SIZE / (1024*1024)}MB).")
 
     tmp_dir = tempfile.mkdtemp()
     tmp_path = os.path.join(tmp_dir, file.filename)

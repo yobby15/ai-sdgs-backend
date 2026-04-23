@@ -12,12 +12,11 @@ Mempermudah pengumpulan dokumen-dokumen administrasi UNESA sebagai bukti dalam p
 
 
 ## Model
-List beberapa model yang nantinya akan digunakan
+List beberapa model yang digunakan
 ### Sentence Embedding Model
-1. `QWEN3-Embedding-0.6B` : Masuk dalam peringkat 9 di MTEB multilingual leaderboard huggingface dan merupakan model yang sangat ringan.
-2. `gemini-embedding-001` : Free API sebesar 1000 request per hari dan token limit sebesar 30k per menit.
-3. `jina-embeddings-v5-text-nano` : Masuk dalam peringkat 10 di MTEB multilingual leaderboard huggingface dengan parameter hanya 0.22B
+`microsoft/harrier-oss-v1-0.6b` : Model embedding terbaru dari micorsoft dijalankan dengan API huggingface inference dengan free tier limit yang cukup besar. Saat ini (18 April 2026) Peringkat 10 dalam MTEB leaderboard.
 ### LLM (Agent)
-1. QWEN3-Coder-Next
-2. Gemini-2.5-flash
-3. Deepseek
+`nvidia/nemotron-3-super-120b-a12b:free` : Model LLM gratis yang disediakan oleh nvidia. API menggunakan openrouter API.
+
+# Flowchart System
+![Flowchart System](https://res.cloudinary.com/dxkxrbteg/image/upload/v1776511868/Project_Flow_tnb3a1.png)
