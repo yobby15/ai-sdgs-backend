@@ -47,7 +47,13 @@ def analyze_document(
         # window_size:int = 2
 ) -> dict:
         logger.debug("[START] : Analyzing document")
-        model_name = llm.model_dump()['name']
+        model_name = llm.model_dump().get("model_name")
+        if model_name is None:
+            model_name = llm.model_dump().get("model")
+
+        if model_name is None:
+            model_name = llm.model_dump().get("name")
+
         id_request = str(uuid.uuid4())
         timestamp = datetime.now().isoformat()
 
@@ -113,7 +119,7 @@ def analyze_document(
         }
 
         folder = Path(save_path)
-        filename = f"result_{source[:-4]}_{id_request}.json"
+        filename = f"result_{source[:-4]}_{timestamp.replace(":", "-")}.json"
 
         file_path = folder / filename
         with open(file_path, "w", encoding="utf-8") as f:
@@ -193,7 +199,7 @@ def main(
     supabase_vdb = supabase_service.supabase_vdb_init(supabase=supabase, embeddings=embeddings)
     # inmemory_vdb = inmemory_vdb_service.inmemory_vdb_init(embeddings=embeddings, vector_length=1024)
     if type_run == "analyze_document":
-        llm_agent = llm_agent_service.model_init(model_name="nvidia/nemotron-3-super-120b-a12b:free", type_api="openrouter")
+        llm_agent = llm_agent_service.model_init(model_name="nvidia/nemotron-3-super-120b-a12b:free", type_api="openrouter") # Baca dari file YAML
         chat_prompt = prompt_agent.FULL_CHAT_PROMPT
     logger.debug("[END] : Initiation Process")
 
