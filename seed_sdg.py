@@ -20,6 +20,7 @@ import logging
 import os
 import sys
 import time
+import uuid
 from datetime import timedelta
 
 import faiss
@@ -267,6 +268,7 @@ def seed(
 
         rows = [
             {
+                "id": str(uuid.uuid4()),
                 "content"  : chunk["text"],
                 "metadata" : chunk["metadata"],
                 "embedding": vector,
