@@ -40,7 +40,7 @@ logging.getLogger("hpack").setLevel(logging.INFO)
 
 logger = logging.getLogger(__name__)
 
-SAVE_PATH = os.getenv("RESULT_SAVE_PATH", "./ai_result")
+#SAVE_PATH = os.getenv("RESULT_SAVE_PATH", "./ai_result")
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
 MAX_FILE_SIZE = 10 * 1024 * 1024
 
@@ -95,6 +95,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -160,14 +161,14 @@ def analyze_document(
         "result": final_result
     }
 
-    if save_result:
-        safe_source = Path(source).stem.replace("/", "_").replace("\\", "_")
-        folder = Path(SAVE_PATH)
-        folder.mkdir(parents=True, exist_ok=True)
-        filename = f"result_{safe_source}_{id_request}.json"
-        with open(folder / filename, "w", encoding="utf-8") as f:
-            json.dump(json_result, f, indent=4, ensure_ascii=False)
-        logger.info("Hasil disimpan ke: %s", folder / filename)
+    # if save_result:
+    #     safe_source = Path(source).stem.replace("/", "_").replace("\\", "_")
+    #     folder = Path(SAVE_PATH)
+    #     folder.mkdir(parents=True, exist_ok=True)
+    #     filename = f"result_{safe_source}_{id_request}.json"
+    #     with open(folder / filename, "w", encoding="utf-8") as f:
+    #         json.dump(json_result, f, indent=4, ensure_ascii=False)
+    #     logger.info("Hasil disimpan ke: %s", folder / filename)
 
     logger.debug("[END] : Analyzing document")
     return json_result
@@ -260,7 +261,7 @@ async def analyze_async(
     file: UploadFile = File(..., description="File PDF yang akan dianalisis (Max 10MB)"),
     source: Optional[str] = None,
     k: int = 10,
-    model_name: str = "nvidia/nemotron-3-super-120b-a12b:free",
+    model_name: str = "z-ai/glm-5.1",
     type_api: Literal["gemini", "huggingface", "openai", "qwen", "openrouter"] = "openrouter",
     save_result: bool = True,
 ):
