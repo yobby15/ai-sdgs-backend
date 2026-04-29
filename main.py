@@ -104,6 +104,7 @@ app.add_middleware(
 def analyze_document(
         path_file: str,
         source: str,
+        supabase_client,
         supabase_vdb: SupabaseVectorStore,
         llm,
         chat_prompt,
@@ -168,17 +169,17 @@ def analyze_document(
     }
 
     if save_result:
-        folder = Path(SAVE_PATH)
-        folder.mkdir(parents=True, exist_ok=True)
+        db_data = {
+            "id_request": json_result["id_request"],
+            "timestamp": json_result["timestamp"],
+            "model_name": json_result["model_name"],
+            "time_execution": json_result["time_execution"],
+            "source": source,
+            "result": json_result["result"]
+        }
         
-        safe_source = Path(source).stem
-        safe_timestamp = timestamp.replace(":", "-")
-        filename = f"result_{safe_source}_{safe_timestamp}.json"
-        
-        file_path = folder / filename
-        with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(json_result, f, indent=4, ensure_ascii=False)
-        logger.info("Hasil disimpan ke: %s", file_path)
+        supabase_service.insert_analysis_result(supabase_client, db_data, table_name="analysis_results")
+        logger.info(f"Hasil analisis berhasil dimasukkan ke database Supabase (ID Request: {id_request})")
 
     logger.debug("[END] : Analyzing document")
     return json_result
@@ -189,6 +190,7 @@ def process_analysis_task(
         tmp_path: str, 
         tmp_dir: str, 
         doc_source: str, 
+        supabase_client,
         supabase_vdb, 
         llm, 
         chat_prompt, 
@@ -203,6 +205,7 @@ def process_analysis_task(
         result = analyze_document(
             path_file=tmp_path,
             source=doc_source,
+            supabase_client=supabase_client,
             supabase_vdb=supabase_vdb,
             llm=llm,
             chat_prompt=chat_prompt,
@@ -301,6 +304,7 @@ async def analyze_async(
         raise HTTPException(status_code=500, detail=f"Gagal menyimpan file: {str(e)}")
 
     doc_source = source or file.filename
+    supabase_client = app_state["supabase"]
     supabase_vdb = app_state["supabase_vdb"]
     chat_prompt = app_state["chat_prompt"]
     llm = get_llm(model_name=model_name, type_api=type_api)
@@ -313,6 +317,7 @@ async def analyze_async(
         tmp_path=tmp_path,
         tmp_dir=tmp_dir,
         doc_source=doc_source,
+        supabase_client=supabase_client,
         supabase_vdb=supabase_vdb,
         llm=llm,
         chat_prompt=chat_prompt,
@@ -337,6 +342,16 @@ def get_analysis_status(job_id: str):
         raise HTTPException(status_code=404, detail="Job ID tidak ditemukan.")
     
     return job
+
+
+@app.get("/history", tags=["Analisis"])
+def get_analysis_history():
+    """
+    Mengambil riwayat hasil analisis dari Supabase.
+    """
+    supabase_client = app_state["supabase"]
+    results = supabase_service.fetch_analysis_results(supabase_client)
+    return {"status": "success", "data": results}
 
 
 @app.post("/seed", tags=["Knowledge Base"])
