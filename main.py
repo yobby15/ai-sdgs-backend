@@ -5,7 +5,7 @@ from app.utils import text_processing
 
 from langchain_community.vectorstores import SupabaseVectorStore
 
-from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks
+from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks, Form
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
@@ -40,7 +40,7 @@ logging.getLogger("hpack").setLevel(logging.INFO)
 
 logger = logging.getLogger(__name__)
 
-#SAVE_PATH = os.getenv("RESULT_SAVE_PATH", "./ai_result")
+SAVE_PATH = os.getenv("RESULT_SAVE_PATH", "./ai_result")
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
 MAX_FILE_SIZE = 10 * 1024 * 1024
 
@@ -88,7 +88,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="AI SDG Scoring API",
     description="Analisis dokumen PDF dan cocokkan dengan indikator SDG menggunakan LLM.",
-    version="0.3.0",
+    version="0.4.0",
     lifespan=lifespan,
 )
 
@@ -111,10 +111,12 @@ def analyze_document(
         save_result: bool = True,
 ) -> dict:
     logger.debug("[START] : Analyzing document")
-    model_name = llm.model_dump()['name']
+    
+    llm_dump = llm.model_dump()
+    model_name = llm_dump.get("model_name") or llm_dump.get("model") or llm_dump.get("name") or "unknown_model"
+
     id_request = str(uuid.uuid4())
     timestamp = datetime.now().isoformat()
-
     start_time = time.time()
 
     extraction_result = input_doc.input_document(path_file=path_file, source=source)
@@ -139,6 +141,7 @@ def analyze_document(
     logger.info("Send prompt to LLM")
     llm_output = None
     llm_execution_status = False
+    
     try:
         logger.debug("[START] : LLM Agent Analyzing (total chars in prompt:%s)", len(full_prompt))
         llm_output = llm.invoke(prompt_value)
@@ -146,9 +149,12 @@ def analyze_document(
         llm_execution_status = True
     except Exception as e:
         logger.error("Terjadi error pada LLM\n\n%s", e)
-        raise
 
-    final_result = text_processing.repair_llm_json(llm_output.content) if llm_execution_status else None
+    if llm_execution_status:
+        final_result = text_processing.repair_llm_json(llm_output.content)
+    else:
+        final_result = None
+
     time_execution = time.time() - start_time
 
     json_result = {
@@ -161,14 +167,18 @@ def analyze_document(
         "result": final_result
     }
 
-    # if save_result:
-    #     safe_source = Path(source).stem.replace("/", "_").replace("\\", "_")
-    #     folder = Path(SAVE_PATH)
-    #     folder.mkdir(parents=True, exist_ok=True)
-    #     filename = f"result_{safe_source}_{id_request}.json"
-    #     with open(folder / filename, "w", encoding="utf-8") as f:
-    #         json.dump(json_result, f, indent=4, ensure_ascii=False)
-    #     logger.info("Hasil disimpan ke: %s", folder / filename)
+    if save_result:
+        folder = Path(SAVE_PATH)
+        folder.mkdir(parents=True, exist_ok=True)
+        
+        safe_source = Path(source).stem
+        safe_timestamp = timestamp.replace(":", "-")
+        filename = f"result_{safe_source}_{safe_timestamp}.json"
+        
+        file_path = folder / filename
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(json_result, f, indent=4, ensure_ascii=False)
+        logger.info("Hasil disimpan ke: %s", file_path)
 
     logger.debug("[END] : Analyzing document")
     return json_result
@@ -220,7 +230,7 @@ def add_sdg_knowledge(
     if special_page is None:
         special_page = []
 
-    logger.debug("[START] : Adding SDG Knowledge")
+    logger.debug(f"[START] : Adding SDG Knowledge (input_param: path_file={path_file}, source={source})")
     start_time = time.time()
     extraction_result = input_doc.input_document(
         path_file=path_file,
@@ -261,7 +271,7 @@ async def analyze_async(
     file: UploadFile = File(..., description="File PDF yang akan dianalisis (Max 10MB)"),
     source: Optional[str] = None,
     k: int = 10,
-    model_name: str = "z-ai/glm-5.1",
+    model_name: str = "nvidia/nemotron-3-super-120b-a12b:free", # Sesuai versi lama
     type_api: Literal["gemini", "huggingface", "openai", "qwen", "openrouter"] = "openrouter",
     save_result: bool = True,
 ):
@@ -332,15 +342,23 @@ def get_analysis_status(job_id: str):
 @app.post("/seed", tags=["Knowledge Base"])
 async def seed_knowledge(
     file: UploadFile = File(..., description="File PDF SDG Methodology (Max 10MB)"),
-    source: Optional[str] = None,
-    page_start: int = 0,
-    page_end: Optional[int] = None,
+    source: Optional[str] = Form(None),
+    page_start: int = Form(0),
+    page_end: Optional[int] = Form(None),
+    special_pages: Optional[str] = Form(None, description="Halaman spesifik dipisah koma. Cth: '10, 19, 30'"),
 ):
     """
     Upload file PDF SDG Methodology dan tambahkan ke vector database Supabase.
     """
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Hanya file PDF yang diterima.")
+
+    parsed_special_pages = []
+    if special_pages:
+        try:
+            parsed_special_pages = [int(p.strip()) for p in special_pages.split(",") if p.strip()]
+        except ValueError:
+            raise HTTPException(status_code=400, detail="special_pages harus berupa angka yang dipisahkan koma, contoh: '10, 19, 30'")
 
     file.file.seek(0, 2)
     file_size = file.file.tell()
@@ -368,6 +386,7 @@ async def seed_knowledge(
             source=doc_source,
             supabase_vdb=supabase_vdb,
             page_range=page_range,
+            special_page=parsed_special_pages
         )
 
         logger.info("Seeding selesai: %s (%d chunks)", doc_source, len(added_ids))
