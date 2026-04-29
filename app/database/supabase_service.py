@@ -15,8 +15,7 @@ def supabase_init(supabase_url: str = None, supabase_service_key: str = None) ->
     return supabase
 
 
-def supabase_vdb_init(embeddings):
-    supabase = supabase_init()
+def supabase_vdb_init(supabase: Client, embeddings):
     vector_store = SupabaseVectorStore(
         client=supabase,
         embedding=embeddings,
@@ -34,3 +33,24 @@ def fetch_sdg_indicator(supabase:Client):
     logger.debug("[DONE] : Fetch SDG Indicator from supabase (length data:%s)", str(len(sdg_data_rows)))
     return sdg_data_rows
 
+
+def insert_analysis_result(supabase: Client, data: dict, table_name: str = "analysis_results"):
+    logger.debug(f"[START] : Insert analysis result to supabase table {table_name}")
+    try:
+        response = supabase.table(table_name).insert(data).execute()
+        logger.debug(f"[DONE] : Insert analysis result to supabase table {table_name}")
+        return response.data
+    except Exception as e:
+        logger.error(f"Error inserting result to supabase: {str(e)}")
+        return None
+
+
+def fetch_analysis_results(supabase: Client, table_name: str = "analysis_results"):
+    logger.debug(f"[START] : Fetch analysis results from supabase table {table_name}")
+    try:
+        response = supabase.table(table_name).select("*").order("created_at", desc=True).execute()
+        logger.debug(f"[DONE] : Fetch analysis results from supabase table {table_name}")
+        return response.data
+    except Exception as e:
+        logger.error(f"Error fetching results from supabase: {str(e)}")
+        return []
