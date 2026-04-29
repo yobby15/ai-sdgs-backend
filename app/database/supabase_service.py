@@ -5,7 +5,7 @@ import os
 
 logger = logging.getLogger(__name__)
 
-def supabase_init(supabase_url: str = None, supabase_service_key: str = None):
+def supabase_init(supabase_url: str = None, supabase_service_key: str = None) -> Client:
     if supabase_url is None:
         supabase_url = os.getenv("SUPABASE_URL")
 
@@ -15,7 +15,8 @@ def supabase_init(supabase_url: str = None, supabase_service_key: str = None):
     return supabase
 
 
-def supabase_vdb_init(supabase:Client, embeddings):
+def supabase_vdb_init(embeddings):
+    supabase = supabase_init()
     vector_store = SupabaseVectorStore(
         client=supabase,
         embedding=embeddings,
