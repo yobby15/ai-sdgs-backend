@@ -34,15 +34,17 @@ logging.getLogger("hpack").setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 
 def analyze_document(
-        path_file:str,
-        save_path:str,
-        source:str,
-        # supabase:Client,
-        # embeddings,
-        # inmemory_vdb : FAISS,
+        type_input: str,
         supabase_vdb : SupabaseVectorStore,
         llm,
         chat_prompt,
+        url: str = None,
+        path_file:str = None,
+        save_path:str = None,
+        source:str = None,
+        # supabase:Client,
+        # embeddings,
+        # inmemory_vdb : FAISS,
         k:int = 2,
         # window_size:int = 2
 ) -> dict:
@@ -80,7 +82,7 @@ def analyze_document(
 
         # retrieval_result = retrieval.build_graph_prompt(matches_chunk[:k], inmemory_vdb=inmemory_vdb, window_size=window_size)
 
-        extraction_result = input_doc.input_document(path_file=path_file, source=source)
+        extraction_result = input_doc.input_document(type_input=type_input, url=url, path_file=path_file, source=source)
         if isinstance(extraction_result, dict):
             retrieval_result = retrieval.metadata_retrival_SDG(metadata_article=extraction_result, vdb=supabase_vdb, k=k)
         elif isinstance(extraction_result, list):
@@ -119,7 +121,10 @@ def analyze_document(
         }
 
         folder = Path(save_path)
-        filename = f"result_{source[:-4]}_{timestamp.replace(":", "-")}.json"
+        try:
+            filename = f"result_{source[:-4]}_{timestamp.replace(":", "-")}.json"
+        except:
+            filename = f"result_{timestamp.replace(":", "-")}.json"
 
         file_path = folder / filename
         with open(file_path, "w", encoding="utf-8") as f:
@@ -140,6 +145,7 @@ def add_sdg_knowledge(
     logger.debug("[START] : Adding SDG Knowledge (input_param: %s)")
     start_time = time.time()
     extraction_result: list[input_doc.Document] = input_doc.input_document(
+        type_input="PDF_document",
         path_file=path_file,
         source=source,
         type_doc="sdg_knowledge",
@@ -156,7 +162,9 @@ def add_sdg_knowledge(
     
 
 def main(
-        path_file: str,
+        type_input: Literal["PDF_document", "webpage"],
+        url: str = None,
+        path_file: str = None,
         save_path: str = None,
         type_run: Literal["analyze_document", "add_sdg_knowledge"] = "analyze_document",
         source: str = None,
@@ -172,41 +180,60 @@ def main(
             logger.info("SDG Adding Knowledge to Vector DB")
 
     logger.debug("Parameter Input: %s",
-    {"path_file": path_file,
-     "type_run":type_run,
-    "save_path":save_path,
-    "source":source,
-    "k":k,
-    "window_size":window_size,
+    {
+        "type_input":type_input,
+        "url":url,
+        "path_file": path_file,
+        "type_run":type_run,
+        "save_path":save_path,
+        "source":source,
+        "k":k,
+        "window_size":window_size,
     })
 
     # input validation
-    if not os.path.exists(path_file):
-        logger.error("Input File (%s) not found", path_file)
-        return f"Input File ({path_file}) not found"
+    if type_input == "PDF_document":
+        if path_file:
+            if not os.path.exists(path_file):
+                logger.error("Input File (%s) not found", path_file)
+                return f"Input File ({path_file}) not found"
+        else:
+            logger.error("Pada type_input=PDF_dcoument, `path_file` tidak boleh kosong")
+            return
+    elif type_input == "webpage":
+        if url is None: 
+            logger.error("Pada type_input='webpage', `url` tidak boleh kosong")
+            return
+    else:
+        logger.error("type_input tidak valid : %s", type_input)
+        return
+
     if save_path:
         if not os.path.exists(save_path):
             logger.error("Save Path Folder (%s) not found", save_path)
             return f"Save Path Folder ({save_path}) not found"
     
-    source = os.path.basename(path_file) if source is None else source
+    if type_input == "PDF_document":
+        source = os.path.basename(path_file) if source is None else source
 
     # Initiation
     logger.info("Initiation Process")
     logger.debug("[START] : Initiation Process")
     embeddings = embedding_service.embedding_init(model_name="microsoft/harrier-oss-v1-0.6b", type_run="huggingface_inference")
-    supabase = supabase_service.supabase_init(supabase_url=os.getenv("SUPABASE_URL"), supabase_service_key=os.getenv("SUPABASE_SERVICE_KEY"))
-    supabase_vdb = supabase_service.supabase_vdb_init(supabase=supabase, embeddings=embeddings)
+    # supabase = supabase_service.supabase_init(supabase_url=os.getenv("SUPABASE_URL"), supabase_service_key=os.getenv("SUPABASE_SERVICE_KEY"))
+    supabase_vdb = supabase_service.supabase_vdb_init(embeddings=embeddings)
     # inmemory_vdb = inmemory_vdb_service.inmemory_vdb_init(embeddings=embeddings, vector_length=1024)
     if type_run == "analyze_document":
-        llm_agent = llm_agent_service.model_init(model_name="nvidia/nemotron-3-super-120b-a12b:free", type_api="openrouter") # Baca dari file YAML
+        llm_agent = llm_agent_service.model_init(model_name="google/gemma-4-26b-a4b-it:free", type_api="openrouter") # Baca dari file YAML
         chat_prompt = prompt_agent.FULL_CHAT_PROMPT
     logger.debug("[END] : Initiation Process")
 
     match type_run:
         case "analyze_document":
-            logger.info("Anlyzing Document")
+            logger.info("Anlyzing Document Input")
             result = analyze_document(
+                type_input=type_input,
+                url=url,
                 path_file=path_file,
                 save_path=save_path,
                 source=source,
@@ -238,7 +265,8 @@ if __name__ == "__main__":
     # )
 
     main(
-        path_file="./data/Sample Documents/jurnal-unesa/ACHMAD KAUTSAR_4.pdf",
+        type_input="webpage",
+        url="https://sdgscenter.unesa.ac.id/post/berdayakan-potensi-ijen-unesa-uicd-2026-dorong-kemandirian-ekonomi-desa-kalianyar-bondowoso",
         save_path="./ai_result/",
         type_run="analyze_document"
     )

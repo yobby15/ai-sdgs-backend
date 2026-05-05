@@ -3,6 +3,8 @@ from app.utils import text_processing
 from langchain_core.documents import Document
 
 import pymupdf4llm
+import requests
+from bs4 import BeautifulSoup
 import json
 import logging
 from typing import Literal, Union, Optional
@@ -352,9 +354,91 @@ def extract_document(
 
     return result_extraction
 
+## Source Code: NOTION FAIZUN
+def extract_webpage(url: str) -> list[dict]:
+    HEADERS = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+    try:
+        response = requests.get(url, headers=HEADERS, timeout=20, verify=False)
+        if response.status_code != 200:
+            logger.error("Response status %s", str(response.status_code))
+            return None
+
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        header_div = soup.find('div', class_='blog-carousel-header')
+        judul = "Tanpa Judul"
+        tanggal = "-"
+
+        if header_div:
+            title_tag = header_div.find(['h1', 'h2'])
+            if title_tag:
+                judul = title_tag.get_text(strip=True)
+            else:
+                full_text = header_div.get_text(strip=True)
+                judul = full_text.split('2026')[0]
+
+            header_text = header_div.get_text(" ", strip=True)
+            match_date = re.search(r'(\d{1,2}\s+[A-Za-z]+\s+\d{4})', header_text)
+            if match_date:
+                tanggal = match_date.group(1)
+
+        content_div = soup.find('div', class_='blog-carousel-desc')
+        paragraphs_list = []
+
+        if content_div:
+            for element in content_div.select('.widget, .kaitan, .related, .share-box, .hidden-sm, script, style'):
+                element.decompose()
+
+            raw_paragraphs = content_div.find_all('p')
+
+            blacklist = [
+                "baca juga", "artikel ini telah tayang", "klik untuk baca",
+                "mau konten menarik", "penulis:", "editor:",
+                "facebook", "instagram", "tiktok", "twitter", "youtube",
+                "x:", "tiktok:", "tok/beq"
+            ]
+
+            for p in raw_paragraphs:
+                txt = p.get_text(strip=True)
+                txt_lower = txt.lower()
+
+                if any(phrase in txt_lower for phrase in blacklist): continue
+                if "http" in txt_lower or "www." in txt_lower: continue
+
+                if len(txt) > 20:
+                    paragraphs_list.append(txt)
+
+        result_chunk = text_processing.pages_to_json_format(
+            pages=[paragraphs_list],
+            source=judul,
+            type_doc="sdg_evidence",
+            additional_metadata={
+                "url":url,
+                "date":tanggal
+            }
+        )
+
+        return result_chunk
+        # return {
+        #     "Judul": judul,
+        #     "Tanggal": tanggal,
+        #     "Paragraf": paragraphs_list,
+        #     "Isi": "\n\n".join(paragraphs_list),
+        #     "URL": url
+        # }
+
+    except Exception as e:
+        logger.error("Terjadi error pada ekstraksi website: %s}", e)
+        return None
+
+
 
 def input_document(
-        path_file:str,
+        type_input: Literal["PDF_document", "webpage"],
+        url: str = None,
+        path_file:str = None,
         source:str = None,
         type_doc: Literal["sdg_evidence", "sdg_knowledge"] = "sdg_evidence",
         page_range: Optional[list[int]] = None,
@@ -382,18 +466,24 @@ def input_document(
             - Jika hasil ekstraksi adalah konten ter-chunk, mengembalikan `list` berisi objek `Document` (page_content & metadata).
     """
     logger.info("Preprocessing Document Input")
-    result_extraction = extract_document(
-        path_file=path_file,
-        type_doc=type_doc,
-        source=source,
-        page_range=page_range,
-        special_page=special_page,
-        page_overlap_char=page_overlap_char,
-        chunk_size=chunk_size,
-        chunk_overlap_char=chunk_overlap_char,
-        tolerance_rate=tolerance_rate,
-        min_chunk_size=min_chunk_size,
-    )
+    match type_input:
+        case "PDF_document":
+            result_extraction = extract_document(
+                path_file=path_file,
+                type_doc=type_doc,
+                source=source,
+                page_range=page_range,
+                special_page=special_page,
+                page_overlap_char=page_overlap_char,
+                chunk_size=chunk_size,
+                chunk_overlap_char=chunk_overlap_char,
+                tolerance_rate=tolerance_rate,
+                min_chunk_size=min_chunk_size,
+            )
+        case "webpage":
+            result_extraction = extract_webpage(
+                url=url
+            )
 
     if isinstance(result_extraction, list):
         documents: list[Document] = []

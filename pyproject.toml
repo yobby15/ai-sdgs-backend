@@ -5,6 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "beautifulsoup4>=4.14.3",
+    "docx>=0.2.4",
     "dotenv>=0.9.9",
     "faiss-cpu>=1.13.2",
     "fastapi>=0.135.1",
@@ -21,6 +23,7 @@ dependencies = [
     "langchain-qwq>=0.3.4",
     "pymupdf4llm>=1.27.2.1",
     "pytest>=9.0.2",
+    "python-docx>=1.2.0",
     "sentence-transformers>=5.2.3",
     "supabase==2.15.2",
     "tqdm>=4.67.3",
