@@ -105,6 +105,8 @@ app.add_middleware(
 def analyze_document(
         path_file: str,
         source: str,
+        type_input: str,
+        url: str,
         supabase_client,
         supabase_vdb: SupabaseVectorStore,
         llm,
@@ -121,7 +123,7 @@ def analyze_document(
     timestamp = datetime.now().isoformat()
     start_time = time.time()
 
-    extraction_result = input_doc.input_document(path_file=path_file, source=source)
+    extraction_result = input_doc.input_document(type_input=type_input, path_file=path_file, url=url, source=source)
     if isinstance(extraction_result, dict):
         retrieval_result = retrieval.metadata_retrival_SDG(
             metadata_article=extraction_result,
@@ -202,7 +204,9 @@ def process_analysis_task(
         job_id: str, 
         tmp_path: str, 
         tmp_dir: str, 
-        doc_source: str, 
+        doc_source: str,
+        type_input: str,
+        url: str,
         supabase_client,
         supabase_vdb, 
         llm, 
@@ -218,6 +222,8 @@ def process_analysis_task(
         result = analyze_document(
             path_file=tmp_path,
             source=doc_source,
+            type_input=type_input,
+            url=url,
             supabase_client=supabase_client,
             supabase_vdb=supabase_vdb,
             llm=llm,
@@ -233,12 +239,15 @@ def process_analysis_task(
         app_state["jobs"][job_id] = {"status": "failed", "result": None, "error": str(e)}
 
     finally:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
+        if tmp_dir:
+            shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
 def add_sdg_knowledge(
         path_file: str,
         source: str,
+        type_input: str,
+        url: str,
         supabase_vdb: SupabaseVectorStore,
         page_range: list[int] = None,
         special_page: list[int] = None
@@ -249,7 +258,9 @@ def add_sdg_knowledge(
     logger.debug(f"[START] : Adding SDG Knowledge (input_param: path_file={path_file}, source={source})")
     start_time = time.time()
     extraction_result = input_doc.input_document(
+        type_input=type_input,
         path_file=path_file,
+        url=url,
         source=source,
         type_doc="sdg_knowledge",
         page_range=page_range,
@@ -284,8 +295,9 @@ def health():
 @app.post("/analyze", tags=["Analisis"])
 async def analyze_async(
     background_tasks: BackgroundTasks,
-    file: UploadFile = File(..., description="File PDF yang akan dianalisis (Max 10MB)"),
-    source: Optional[str] = None,
+    file: Optional[UploadFile] = File(None, description="File PDF yang akan dianalisis (Max 10MB)"),
+    url: Optional[str] = Form(None, description="URL webpage yang akan dianalisis"),
+    source: Optional[str] = Form(None),
     k: int = 10,
     model_name: str = "z-ai/glm-5.1",
     type_api: Literal["gemini", "huggingface", "openai", "qwen", "openrouter"] = "openrouter",
@@ -295,28 +307,41 @@ async def analyze_async(
     Upload file PDF dan masukkan ke antrean analisis secara asinkron.
     Mengembalikan job_id yang bisa dicek melalui GET /analyze/{job_id}.
     """
-    if not file.filename.lower().endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Hanya file PDF yang diterima.")
-
-    file_size = 0
-    file.file.seek(0, 2)
-    file_size = file.file.tell()
-    file.file.seek(0)
+    if not file and not url:
+        raise HTTPException(status_code=400, detail="Harus menyertakan file PDF atau URL.")
     
-    if file_size > MAX_FILE_SIZE:
-        raise HTTPException(status_code=413, detail=f"Ukuran file melebihi batas maksimal ({MAX_FILE_SIZE / (1024*1024)}MB).")
+    if file and url:
+        raise HTTPException(status_code=400, detail="Hanya boleh mengirimkan file PDF ATAU URL, tidak keduanya.")
 
-    tmp_dir = tempfile.mkdtemp()
-    tmp_path = os.path.join(tmp_dir, file.filename)
-    
-    try:
-        with open(tmp_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-    except Exception as e:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-        raise HTTPException(status_code=500, detail=f"Gagal menyimpan file: {str(e)}")
+    tmp_dir = None
+    tmp_path = None
+    doc_source = source
+    type_input = "PDF_document" if file else "webpage"
 
-    doc_source = source or file.filename
+    if file:
+        if not file.filename.lower().endswith(".pdf"):
+            raise HTTPException(status_code=400, detail="Hanya file PDF yang diterima.")
+
+        file.file.seek(0, 2)
+        file_size = file.file.tell()
+        file.file.seek(0)
+
+        if file_size > MAX_FILE_SIZE:
+            raise HTTPException(status_code=413, detail=f"Ukuran file melebihi batas maksimal ({MAX_FILE_SIZE / (1024*1024)}MB).")
+
+        tmp_dir = tempfile.mkdtemp()
+        tmp_path = os.path.join(tmp_dir, file.filename)
+
+        try:
+            with open(tmp_path, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+        except Exception as e:
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+            raise HTTPException(status_code=500, detail=f"Gagal menyimpan file: {str(e)}")
+
+        doc_source = source or file.filename
+    else:
+        doc_source = source or url
     supabase_client = app_state["supabase"]
     supabase_vdb = app_state["supabase_vdb"]
     chat_prompt = app_state["chat_prompt"]
@@ -330,6 +355,8 @@ async def analyze_async(
         tmp_path=tmp_path,
         tmp_dir=tmp_dir,
         doc_source=doc_source,
+        type_input=type_input,
+        url=url,
         supabase_client=supabase_client,
         supabase_vdb=supabase_vdb,
         llm=llm,
@@ -369,7 +396,8 @@ def get_analysis_history():
 
 @app.post("/seed", tags=["Knowledge Base"])
 async def seed_knowledge(
-    file: UploadFile = File(..., description="File PDF SDG Methodology (Max 10MB)"),
+    file: Optional[UploadFile] = File(None, description="File PDF SDG Methodology (Max 10MB)"),
+    url: Optional[str] = Form(None, description="URL webpage SDG Methodology"),
     source: Optional[str] = Form(None),
     page_start: int = Form(0),
     page_end: Optional[int] = Form(None),
@@ -378,8 +406,11 @@ async def seed_knowledge(
     """
     Upload file PDF SDG Methodology dan tambahkan ke vector database Supabase.
     """
-    if not file.filename.lower().endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Hanya file PDF yang diterima.")
+    if not file and not url:
+        raise HTTPException(status_code=400, detail="Harus menyertakan file PDF atau URL.")
+
+    if file and url:
+        raise HTTPException(status_code=400, detail="Hanya boleh mengirimkan file PDF ATAU URL, tidak keduanya.")
 
     parsed_special_pages = []
     if special_pages:
@@ -388,21 +419,36 @@ async def seed_knowledge(
         except ValueError:
             raise HTTPException(status_code=400, detail="special_pages harus berupa angka yang dipisahkan koma, contoh: '10, 19, 30'")
 
-    file.file.seek(0, 2)
-    file_size = file.file.tell()
-    file.file.seek(0)
-    
-    if file_size > MAX_FILE_SIZE:
-        raise HTTPException(status_code=413, detail=f"Ukuran file melebihi batas maksimal ({MAX_FILE_SIZE / (1024*1024)}MB).")
+    tmp_dir = None
+    tmp_path = None
+    doc_source = source
+    type_input = "PDF_document" if file else "webpage"
 
-    tmp_dir = tempfile.mkdtemp()
-    tmp_path = os.path.join(tmp_dir, file.filename)
+    if file:
+        if not file.filename.lower().endswith(".pdf"):
+            raise HTTPException(status_code=400, detail="Hanya file PDF yang diterima.")
+
+        file.file.seek(0, 2)
+        file_size = file.file.tell()
+        file.file.seek(0)
+
+        if file_size > MAX_FILE_SIZE:
+            raise HTTPException(status_code=413, detail=f"Ukuran file melebihi batas maksimal ({MAX_FILE_SIZE / (1024*1024)}MB).")
+
+        tmp_dir = tempfile.mkdtemp()
+        tmp_path = os.path.join(tmp_dir, file.filename)
+
+        try:
+            with open(tmp_path, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+            doc_source = source or file.filename
+        except Exception as e:
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+            raise HTTPException(status_code=500, detail=f"Gagal menyimpan file: {str(e)}")
+    else:
+        doc_source = source or url
 
     try:
-        with open(tmp_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-
-        doc_source = source or file.filename
         page_range = [page_start, page_end] if page_end else None
         supabase_vdb = app_state["supabase_vdb"]
 
@@ -410,6 +456,8 @@ async def seed_knowledge(
 
         added_ids = await run_in_threadpool(
             add_sdg_knowledge,
+            type_input=type_input,
+            url=url,
             path_file=tmp_path,
             source=doc_source,
             supabase_vdb=supabase_vdb,
@@ -430,7 +478,8 @@ async def seed_knowledge(
         raise HTTPException(status_code=500, detail=f"Terjadi error: {str(e)}")
 
     finally:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
+        if tmp_dir:
+            shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
 if __name__ == "__main__":

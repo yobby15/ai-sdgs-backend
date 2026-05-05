@@ -12,7 +12,7 @@ mock_path = "./tests/mocks/"
 @pytest.mark.core(type_test="input")
 def test_input_document_journal():
     filename = "ACHMAD KAUTSAR_1.pdf"
-    metadata = input_doc.input_document(path_file=mock_path+filename, source=filename)
+    metadata = input_doc.input_document(type_input="PDF_document", path_file=mock_path+filename, source=filename)
 
     assert isinstance(metadata, dict)
     assert isinstance(metadata['abstract'], str)
@@ -22,7 +22,7 @@ def test_input_document_journal():
 @pytest.mark.core(type_test="input")
 def test_input_document_administration():
     filename = "TOR-PM.pdf"
-    result_extraction = input_doc.input_document(path_file=mock_path+filename, source=filename)
+    result_extraction = input_doc.input_document(type_input="PDF_document", path_file=mock_path+filename, source=filename)
 
     assert isinstance(result_extraction, list)
     assert isinstance(result_extraction[0], input_doc.Document)
@@ -30,7 +30,7 @@ def test_input_document_administration():
 @pytest.mark.core(type_test="input")
 def test_input_document_sdg_knowledge():
     filename = "Sustainability Impact Ratings Methodology 2026.pdf"
-    result_extraction = input_doc.input_document(path_file=mock_path+filename, source=filename, type_doc="sdg_knowledge", page_range=[10, 153])
+    result_extraction = input_doc.input_document(type_input="PDF_document", path_file=mock_path+filename, source=filename, type_doc="sdg_knowledge", page_range=[10, 153])
 
     assert isinstance(result_extraction, list)
     assert isinstance(result_extraction[0], input_doc.Document)
