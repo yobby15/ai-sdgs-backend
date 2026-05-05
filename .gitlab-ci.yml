@@ -1,0 +1,40 @@
+stages:
+  - test
+  - deploy
+
+variables:
+  UV_CACHE_DIR: "$CI_PROJECT_DIR/.uv-cache"
+
+cache:
+  key:
+    files:
+      - uv.lock
+  paths:
+    - .uv-cache
+
+run_tests:
+  stage: test
+  image: ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+  script:
+    - echo "Installing dependencies..."
+    - uv sync --frozen
+    
+    # - echo "Running Linting..."
+    # - uv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+    
+    # - echo "Running Unit Tests..."
+    # - uv run pytest
+
+deploy_vps:
+  stage: deploy
+  script:
+    - echo "🚀 Mengirim kode ke VPS..."
+    - rsync -avz --delete --exclude '.uv-cache/' --exclude '.git/' --exclude '__pycache__/' --exclude '.pytest_cache/' --exclude '.venv/' ./ azhar@178.128.52.238:/home/azhar/aisdg/
+    
+    - echo "🔄 Syncing & Restarting Service..."
+    - |
+      ssh azhar@178.128.52.238 "
+        cd /home/azhar/aisdg && 
+        ~/.local/bin/uv sync --frozen && 
+        systemctl --user restart aisdg
+      "
