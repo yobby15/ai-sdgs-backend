@@ -354,11 +354,21 @@ def extract_document(
 
     return result_extraction
 
-## Source Code: NOTION FAIZUN
+
 def extract_webpage(url: str) -> list[dict]:
     HEADERS = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
+    
+    BLACKLIST = [
+        "baca juga", "artikel ini telah tayang", "klik untuk baca",
+        "mau konten menarik", "penulis:", "editor:",
+        "facebook", "instagram", "tiktok", "twitter", "youtube",
+        "x:", "tiktok:", "tok/beq", "advertisement", "iklan",
+        "berlangganan", "subscribe", "newsletter", "cookie",
+        "hak cipta", "copyright", "all rights reserved"
+    ]
+
     try:
         response = requests.get(url, headers=HEADERS, timeout=20, verify=False)
         if response.status_code != 200:
@@ -367,72 +377,114 @@ def extract_webpage(url: str) -> list[dict]:
 
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        header_div = soup.find('div', class_='blog-carousel-header')
-        judul = "Tanpa Judul"
-        tanggal = "-"
+        for tag in soup.select('script, style, noscript, iframe, nav, footer, header, aside, .ads, .iklan, .related, .widget, .share-box, .kaitan, .hidden-sm'):
+            tag.decompose()
 
+        judul = "Tanpa Judul"
+
+        header_div = soup.find('div', class_='blog-carousel-header')
         if header_div:
             title_tag = header_div.find(['h1', 'h2'])
+            judul = title_tag.get_text(strip=True) if title_tag else header_div.get_text(strip=True).split('2026')[0]
+
+        if judul == "Tanpa Judul":
+            og_title = soup.find('meta', property='og:title')
+            if og_title and og_title.get('content'):
+                judul = og_title['content'].strip()
+
+        if judul == "Tanpa Judul":
+            title_tag = soup.find('title')
             if title_tag:
                 judul = title_tag.get_text(strip=True)
-            else:
-                full_text = header_div.get_text(strip=True)
-                judul = full_text.split('2026')[0]
 
+        if judul == "Tanpa Judul":
+            h1 = soup.find('h1')
+            if h1:
+                judul = h1.get_text(strip=True)
+
+        logger.debug("Judul ditemukan: %s", judul)
+
+        tanggal = "-"
+        date_pattern = r'(\d{1,2}\s+[A-Za-z]+\s+\d{4}|\d{4}-\d{2}-\d{2})'
+
+        for meta_name in ['article:published_time', 'og:published_time', 'datePublished']:
+            meta_date = soup.find('meta', property=meta_name) or soup.find('meta', attrs={'name': meta_name})
+            if meta_date and meta_date.get('content'):
+                tanggal = meta_date['content'][:10]  
+                break
+
+        if tanggal == "-":
+            time_tag = soup.find('time')
+            if time_tag:
+                tanggal = time_tag.get('datetime', time_tag.get_text(strip=True))[:10]
+
+        if tanggal == "-" and header_div:
             header_text = header_div.get_text(" ", strip=True)
-            match_date = re.search(r'(\d{1,2}\s+[A-Za-z]+\s+\d{4})', header_text)
+            match_date = re.search(date_pattern, header_text)
             if match_date:
                 tanggal = match_date.group(1)
 
-        content_div = soup.find('div', class_='blog-carousel-desc')
+        logger.debug("Tanggal ditemukan: %s", tanggal)
+
         paragraphs_list = []
+        content_div = None
+
+        content_div = soup.find('div', class_='blog-carousel-desc')
+
+        if not content_div:
+            content_div = soup.find('article')
+
+        if not content_div:
+            content_div = soup.find('main')
+
+        if not content_div:
+            for candidate_class in [
+                'article-content', 'article-body', 'post-content', 'post-body',
+                'entry-content', 'content-body', 'detail-content', 'detail__body',
+                'read__content', 'itp_bodycopy', 'article__content'
+            ]:
+                content_div = soup.find('div', class_=candidate_class)
+                if content_div:
+                    logger.debug("Content div ditemukan via class: %s", candidate_class)
+                    break
+
+        if not content_div:
+            logger.warning("Tidak ada content div spesifik, fallback ke body.")
+            content_div = soup.body
 
         if content_div:
-            for element in content_div.select('.widget, .kaitan, .related, .share-box, .hidden-sm, script, style'):
-                element.decompose()
-
             raw_paragraphs = content_div.find_all('p')
-
-            blacklist = [
-                "baca juga", "artikel ini telah tayang", "klik untuk baca",
-                "mau konten menarik", "penulis:", "editor:",
-                "facebook", "instagram", "tiktok", "twitter", "youtube",
-                "x:", "tiktok:", "tok/beq"
-            ]
-
             for p in raw_paragraphs:
                 txt = p.get_text(strip=True)
                 txt_lower = txt.lower()
 
-                if any(phrase in txt_lower for phrase in blacklist): continue
-                if "http" in txt_lower or "www." in txt_lower: continue
-
+                if any(phrase in txt_lower for phrase in BLACKLIST):
+                    continue
+                if "http" in txt_lower or "www." in txt_lower:
+                    continue
                 if len(txt) > 20:
                     paragraphs_list.append(txt)
+
+        logger.debug("Total paragraf diekstrak: %d", len(paragraphs_list))
+
+        if not paragraphs_list:
+            logger.warning("Tidak ada paragraf yang berhasil diekstrak dari URL: %s", url)
 
         result_chunk = text_processing.pages_to_json_format(
             pages=[paragraphs_list],
             source=judul,
             type_doc="sdg_evidence",
             additional_metadata={
-                "url":url,
-                "date":tanggal
+                "url": url,
+                "date": tanggal
             }
         )
 
         return result_chunk
-        # return {
-        #     "Judul": judul,
-        #     "Tanggal": tanggal,
-        #     "Paragraf": paragraphs_list,
-        #     "Isi": "\n\n".join(paragraphs_list),
-        #     "URL": url
-        # }
 
     except Exception as e:
-        logger.error("Terjadi error pada ekstraksi website: %s}", e)
+        logger.error("Terjadi error pada ekstraksi website: %s", e)
         return None
-
 
 
 def input_document(
