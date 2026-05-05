@@ -74,3 +74,13 @@ def test_chunks_retrieval_SDG(load_supabase_vdb, generate_extracted_data):
         pass
 
     assert os.path.exists(save_path)
+
+
+@pytest.mark.core(type_test="input-web")
+def test_extract_webpage():
+    url = "https://sdgscenter.unesa.ac.id/post/berdayakan-potensi-ijen-unesa-uicd-2026-dorong-kemandirian-ekonomi-desa-kalianyar-bondowoso"
+    chunk_result = input_doc.extract_webpage(url=url)
+
+    assert isinstance(chunk_result, list)
+    assert isinstance(chunk_result[0].get("text"), str)
+    assert isinstance(chunk_result[-1].get("metadata").get("url"), str)

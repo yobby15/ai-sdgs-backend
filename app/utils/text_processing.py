@@ -304,12 +304,13 @@ def pages_to_json_format(
         type_doc: Literal["sdg_evidence", "sdg_knoledge"] = "sdg_evidence",
         start_page_index: int = 0,
         # page_range: list[int, int] = [],
+        **additional_kwargs
         ) -> list[dict]:
     """
     Mengubah data [page_list[chunk]] menjadi format JSON
     yang siap digunakan oleh vector database.
     """
-
+    
     results = []
     global_chunk_id = 0
 
@@ -329,6 +330,8 @@ def pages_to_json_format(
                     "type":type_doc,
                 }
             }
+            if additional_kwargs.get("additional_metadata"):
+                item["metadata"] = item['metadata'] | additional_kwargs["additional_metadata"]
 
             results.append(item)
 
