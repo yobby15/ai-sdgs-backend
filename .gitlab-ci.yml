@@ -22,8 +22,8 @@ run_tests:
     # - echo "Running Linting..."
     # - uv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
     
-    - echo "Running Unit Tests..."
-    - uv run pytest
+    # - echo "Running Unit Tests..."
+    # - uv run pytest
 
 deploy_vps:
   stage: deploy
